@@ -1,5 +1,5 @@
 #!/bin/sh
-# ANYKERNEL compiler script by vadonka v1.0.5
+# ANYKERNEL compiler script by vadonka v1.0.7
 # Date: 2012.01.16
 #
 # You need to define this below:
@@ -12,35 +12,61 @@ export comphome=/home/android/android/compiled
 export cm7bootimg=/home/android/android/cm7orig_kernel
 ######################################################
 
-CBOOST=`grep -c "^CONFIG_NVRM_CPU1_CORE_BOOST" $krnlhome/.config`
-AVPOC=`grep -c "^CONFIG_MAX_AVP_OC_FREQ_BOOST" $krnlhome/.config`
-GPUOC=`grep -c "^CONFIG_MAX_3D_OC_FREQ_BOOST" $krnlhome/.config`
-RAMHACK=`grep "^CONFIG_RAMHACK" $krnlhome/.config | awk 'BEGIN { FS = "=" } ; { print $2}'`
-CVER=`grep "^CONFIG_LOCALVERSION" $krnlhome/.config`
+if [ -z $1 ]; then
+    export RAMHACK=`grep "^CONFIG_RAMHACK" $krnlhome/.config | awk 'BEGIN { FS = "=" } ; { print $2}'`
+    echo "RAMHACK: using kernel setting"
+else
+    if [[ $1 = [0-9]* ]]; then
+	export RAMHACK=$1
+	echo "RAMHACK: override kernel setting, using specified size: $(($1)) MB"
+    else
+	echo "Invalid RAMHACK size, revert to the kernel default: $(($RAMHACK))"
+	export RAMHACK=`grep "^CONFIG_RAMHACK" $krnlhome/.config | awk 'BEGIN { FS = "=" } ; { print $2}'`    
+    fi
+fi
+
+if [ "$2" == "shared" ]; then
+    CVOUTSIZE="128"
+    echo "Using shared memory mode"
+else
+    CVOUTSIZE=$((128-$RAMHACK))
+    echo "Using traditional ramhack mode"
+fi
+
+# Carveout size tweak
+export CVOUT=`grep "^CONFIG_GPU_MEM_CARVEOUT" $krnlhome/.config`
+export CVOUTNEW=`echo 'CONFIG_GPU_MEM_CARVEOUT_SZ='$(($CVOUTSIZE))`
+sed -i "s/$CVOUT/$CVOUTNEW/g" $krnlhome/.config
+
+# Auto kernel version
+export CBOOST=`grep -c "^CONFIG_NVRM_CPU1_CORE_BOOST" $krnlhome/.config`
+export AVPOC=`grep -c "^CONFIG_MAX_AVP_OC_FREQ_BOOST" $krnlhome/.config`
+export GPUOC=`grep -c "^CONFIG_MAX_3D_OC_FREQ_BOOST" $krnlhome/.config`
+export CVER=`grep "^CONFIG_LOCALVERSION" $krnlhome/.config`
 
 if [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOCCB-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOCCB-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOCCB-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOCCB-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOCCB-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOCCB-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "0" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-CB-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-CB-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOC-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOC-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOC-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOC-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 elif [ "$CBOOST" == "0" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOC-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOC-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 else
-	NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-PwrS-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-PwrS-'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
 fi
 
