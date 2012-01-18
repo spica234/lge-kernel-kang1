@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.54
-# Tue Jan 17 08:26:59 2012
+# Tue Jan 17 08:28:23 2012
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -282,15 +282,15 @@ CONFIG_BOOST_PERIPHERALS=y
 #
 # CPU second core management
 #
-CONFIG_NVRM_CPU1_CORE_BOOST=y
-CONFIG_MAX_AVP_OC_FREQ_BOOST=y
-CONFIG_MAX_3D_OC_FREQ_BOOST=y
+# CONFIG_NVRM_CPU1_CORE_BOOST is not set
+# CONFIG_MAX_AVP_OC_FREQ_BOOST is not set
+# CONFIG_MAX_3D_OC_FREQ_BOOST is not set
 CONFIG_GPU_MEM_CARVEOUT_SZ=128
 
 #
 # LGE Processor Voltage Table
 #
-# CONFIG_LOWER_CPU_FREQ is not set
+CONFIG_LOWER_CPU_FREQ=y
 # CONFIG_CPU_UNDERVOLT is not set
 # CONFIG_FAN5355_UNDERVOLT is not set
 CONFIG_RAMHACK=0
