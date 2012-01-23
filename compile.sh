@@ -1,6 +1,6 @@
 #!/bin/sh
-# ANYKERNEL compiler script by vadonka v1.0.7
-# Date: 2012.01.16
+# ANYKERNEL compiler script by vadonka v1.0.8
+# Date: 2012.01.22
 #
 # You need to define this below:
 ######################################################
@@ -38,64 +38,15 @@ export CVOUT=`grep "^CONFIG_GPU_MEM_CARVEOUT" $krnlhome/.config`
 export CVOUTNEW=`echo 'CONFIG_GPU_MEM_CARVEOUT_SZ='$(($CVOUTSIZE))`
 sed -i "s/$CVOUT/$CVOUTNEW/g" $krnlhome/.config
 
-# Auto kernel version
-export CBOOST=`grep -c "^CONFIG_NVRM_CPU1_CORE_BOOST" $krnlhome/.config`
-export AVPOC=`grep -c "^CONFIG_MAX_AVP_OC_FREQ_BOOST" $krnlhome/.config`
-export GPUOC=`grep -c "^CONFIG_MAX_3D_OC_FREQ_BOOST" $krnlhome/.config`
+# Read current kernel version
 export CVER=`grep "^CONFIG_LOCALVERSION" $krnlhome/.config`
 
 if [ "$2" == "shared" ]; then
-    if [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOCCBS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOCCBS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOCCBS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-CBS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOCS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOCS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOCS-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-RHS'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
     else
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-PwrSS-'$(($RAMHACK))'M"'`
+	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-RH'$(($RAMHACK))'M"'`
 	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    fi
-else
-    if [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOCCB-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOCCB-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOCCB-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "1" -a "$AVPOC" == "0" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-CB-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AGOC-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "1" -a "$GPUOC" == "0" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-AOC-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    elif [ "$CBOOST" == "0" -a "$AVPOC" == "0" -a "$GPUOC" == "1" ]; then
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-GOC-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    else
-	export NVER=`echo 'CONFIG_LOCALVERSION="-LGEK-PwrS-'$(($RAMHACK))'M"'`
-	sed -i "s/$CVER/$NVER/g" $krnlhome/.config
-    fi
 fi
 
 export CCOMPILER=arm-linux-gnueabi-

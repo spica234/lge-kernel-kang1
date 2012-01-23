@@ -305,11 +305,13 @@ void NvGyroAccelI2CClose(NvOdmServicesI2cHandle hI2CDevice)
 NvBool NvGyroAccelI2CSetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* value, NvU32 len)
 {
 	int i;  
-	NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
+        NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
 	NvOdmI2cTransactionInfo TransactionInfo;
 
+// LGE_CHANGE_S [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 	if (reboot == 1)
 		return NV_FALSE;
+// LGE_CHANGE_E [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 
 	if ((NULL == hDevice) || (NULL == value) || (len > I2C_GYROACCEL_PACKET_SIZE-1)) {
 		return NV_FALSE;
@@ -335,10 +337,10 @@ NvBool NvGyroAccelI2CSetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
 	if (i2c_status != NvOdmI2cStatus_Success) {
 	    printk(" ## MPU3050 _ Give up!! NvGyroAccelI2CSetRegs failed: register %d \n", offset);
 
-		//reboot sensors
-		reboot = 1;
+           //reboot sensors
+           reboot = 1;
 		
-		return NV_FALSE;
+            return NV_FALSE;
 	}
 
 	return NV_TRUE;
@@ -357,8 +359,10 @@ NvBool NvGyroAccelI2CGetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
         NvOdmI2cStatus i2c_status = NvOdmI2cStatus_Timeout;
 	NvOdmI2cTransactionInfo TransactionInfo[2];
 
+// LGE_CHANGE_S [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 	if (reboot == 1)
 		return NV_FALSE;
+// LGE_CHANGE_E [dongjin73.kim@lge.com] 2011-05-28, [LGE_AP20] sensors: I2C recovery
 
 	if ((NULL == hDevice) || (NULL == value) || (len > I2C_GYROACCEL_PACKET_SIZE-1)) {
 		printk("NvOdmI2c Get Regs Failed, max size is %d bytes\n", I2C_GYROACCEL_PACKET_SIZE-1);
@@ -390,10 +394,10 @@ NvBool NvGyroAccelI2CGetRegs(NvOdmGyroAccelHandle hDevice, NvU8 offset, NvU8* va
 	if (i2c_status != NvOdmI2cStatus_Success) {
 	    printk(" ## MPU3050 _ Give up!! NvGyroAccelI2CSetRegs failed: register %d \n", offset);
 
-		//reboot sensors
-		reboot = 1;
+           //reboot sensors
+           reboot = 1;
 		
-		return NV_FALSE;
+            return NV_FALSE;
 	}
 
         NvOdmOsMemcpy(value, &s_ReadBuffer[0], len);

@@ -195,7 +195,7 @@ int bcmsdh_probe(struct device *dev)
 	irq_flags = \
 		IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL | IORESOURCE_IRQ_SHAREABLE;
 #else
-	irq_flags = IRQF_TRIGGER_FALLING;
+	 irq_flags = IRQF_TRIGGER_FALLING;
 #endif /* HW_OOB */
 	irq = dhd_customer_oob_irq_map(&irq_flags);
 	if  (irq < 0) {

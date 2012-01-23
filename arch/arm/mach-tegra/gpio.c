@@ -67,7 +67,7 @@
 #define GPIO_INT_LVL_LEVEL_HIGH		0x000001
 #define GPIO_INT_LVL_LEVEL_LOW		0x000000
 
-//20100724  for gpio setting while sleep [LGE_START]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 #define REG_CNF     0
 #define REG_OE      1
 #define REG_OUT     2
@@ -76,7 +76,7 @@
 #define DBG_BUF_SIZE	64
 
 int get_gpio_reg_data(int port, int pin, int gpio, int reg);
-//20100724  for gpio setting while sleep [LGE_END]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 
 extern int gpio_get_pinmux_group(int gpio_nr);
 int tegra_gpio_io_power_config(int gpio_nr, unsigned int enable);
@@ -782,7 +782,7 @@ void tegra_gpio_disable_all_irq(void)
 	}
 
 }
-// 20110209  disable gpio interrupt during power-off  [END]
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [END]
 
 static int tegra_gpio_irq_set_type(unsigned int irq, unsigned int type)
 {
@@ -956,7 +956,7 @@ void tegra_gpio_suspend(void)
 #endif
 
 #if APPLY_SLEEP_GPIO_TABLE
-	//20100724  for gpio setting while sleep [LGE_START]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 	for (b=0; b<ARRAY_SIZE(tegra_sleep_gpio_banks); b++) {
 		struct tegra_gpio_bank *bank = &tegra_sleep_gpio_banks[b];
 
@@ -987,7 +987,7 @@ void tegra_gpio_suspend(void)
 		
 	}
 #endif	
-	//20100724  for gpio setting while sleep [LGE_END]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 
 #if SLEEP_GPIO_LOG
 	pr_info("[POWER] <<< Suspend GPIO Setting value (after) [START] >>>  \n");
@@ -1139,17 +1139,17 @@ postcore_initcall(tegra_gpio_init);
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 
-//20100724  for gpio setting while sleep [LGE_START]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 #include <asm/uaccess.h>
 #include <linux/io.h>
-//20100724  for gpio setting while sleep [LGE_END]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 
 static int dbg_gpio_show(struct seq_file *s, void *unused)
 {
 	int i;
 	int j;
 
-	//20100724  for gpio setting while sleep [LGE_START]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 	if ( gpio_dbgfs_mode == NORMAL_MODE )								 
 	{								
 		seq_printf(s, "ctrl:port CNF OE OUT IN INT_STA INT_ENB INT_LVL (hex) \n");
@@ -1158,12 +1158,12 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
 	{
 		seq_printf(s, "ctrl:port CNF OE OUT INT_ENB INT_LVL (hex) \n");
 	}
-	//20100724  for gpio setting while sleep [LGE_END]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 	
 	for (i = 0; i < 7; i++) {
 		for (j = 0; j < 4; j++) {
 			int gpio = tegra_gpio_compose(i, j, 0);
-			//20100724  for gpio setting while sleep [LGE_START]
+			//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 			if ( gpio_dbgfs_mode == NORMAL_MODE )								 
 			{								
 			seq_printf(s, "%d:%d %02x %02x %02x %02x %02x %02x %06x\n",
@@ -1186,7 +1186,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
 				       tegra_sleep_gpio_banks[i].int_enb[j],
 				       tegra_sleep_gpio_banks[i].int_lvl[j]);
 			}
-			//20100724  for gpio setting while sleep [LGE_START]
+			//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 		}
 	}
 	return 0;
@@ -1205,7 +1205,7 @@ static const struct file_operations debug_fops = {
 };
 
 
-//20100724  for gpio setting while sleep [LGE_START]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 typedef struct  {
     int port_num;
     
@@ -1489,16 +1489,16 @@ void create_additional_debugfs(void)
     debugfs_create_file("INT_LVL",0666, NULL, buff, &fops_INT_LVL);
 }
 
-//20100724  for gpio setting while sleep [LGE_END]
+//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 
 static int __init tegra_gpio_debuginit(void)
 {
 	(void) debugfs_create_file("tegra_gpio", S_IRUGO,
 					NULL, NULL, &debug_fops);
 	
-	//20100724  for gpio setting while sleep [LGE_START]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_START]
 	create_additional_debugfs();
-	//20100724  for gpio setting while sleep [LGE_END]
+	//20100724 byoungwoo.yoon@lge.com for gpio setting while sleep [LGE_END]
 	
 	return 0;
 }

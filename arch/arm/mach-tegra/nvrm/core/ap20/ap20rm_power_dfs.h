@@ -392,7 +392,7 @@ NvRmPrivAp20DttPolicyUpdate(
     NvS32 TemperatureC,
     NvRmDtt* pDt);
 
-//20101121 , HW power off in thermal limit [START]
+//20101121 cs77.ha@lge.com, HW power off in thermal limit [START]
 #if defined(CONFIG_MACH_STAR)
 void
 NvRmPrivStarDttPolicyUpdate(
@@ -401,7 +401,7 @@ NvRmPrivStarDttPolicyUpdate(
     NvRmDtt* pDt);
 
 #endif
-//20101121 , HW power off in thermal limit [END]
+//20101121 cs77.ha@lge.com, HW power off in thermal limit [END]
 
 /**
  * Throttles DFS target clocks.

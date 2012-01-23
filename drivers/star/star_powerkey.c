@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2009 LGE, Inc.
  *
- * Author: Changsu Ha <>
+ * Author: Changsu Ha <cs77.ha@lge.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,15 @@
 /**
 	@brief		 star(lgp990) power key
  
-	@author		
+	@author      cs77.ha@lge.com
 	@date		 2010-04-13
  
 	@version	 V1.00		 2010.04.13		 Changsu Ha	 Create
 */
 
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #define AP_SUSPEND_STATUS
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 
 #define AP20_A03_POWERKEY_WAR
 
@@ -60,11 +60,11 @@
 #define WAKEUP_POWERKEY_MASK    (1 << 24)     // Wake Event 24 - AP_ONKEY
 #endif
 
-// 20110209  disable gpio interrupt during power-off  [START] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [START] 
 #include <linux/gpio.h>
 
 extern void tegra_gpio_disable_all_irq(void);
-// 20110209  disable gpio interrupt during power-off  [END] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [END] 
 #if 1
 extern void write_cmd_reserved_buffer(unsigned char *buf, size_t len);
 extern void read_cmd_reserved_buffer(unsigned char *buf, size_t len);
@@ -97,12 +97,12 @@ static int key_wakeup_ISR = 0;
 static void __iomem *pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
 #endif
 
-//20110324, , LP1 powerkey skip issue [START]
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [START]
 extern bool core_lock_on;
 static int LP1_key_wake = 0;
-//20110324, , LP1 powerkey skip issue [END]
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [END]
 
-//20101129, , idle current issue [START]
+//20101129, cs77.ha@lge.com, idle current issue [START]
 typedef struct TouchMakerRec
 {
     NvOdmServicesGpioHandle gpioHandle;
@@ -110,10 +110,10 @@ typedef struct TouchMakerRec
 } TouchMaker;
 
 static TouchMaker s_touchMaker;
-//20101129, , idle current issue [END]
+//20101129, cs77.ha@lge.com, idle current issue [END]
 
 
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP_SUSPEND_STATUS
 typedef struct ModemCheckRec
 {
@@ -123,7 +123,7 @@ typedef struct ModemCheckRec
 
 static ModemCheck s_modemCheck;
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
 
 #define POWERKEY_DELAY_NSEC     20000000     //20ms
 #define KEYCHECK_RETRY_COUNT    5   // it must be odd value.
@@ -170,9 +170,9 @@ static void powerkey_handle(struct work_struct *wq)
             input_sync(s_powerkey.inputDev);
         }
         key_wakeup_ISR = 1;
-//20110324, , LP1 powerkey skip issue [START]
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [START]
         LP1_key_wake = 0;
-//20110324, , LP1 powerkey skip issue [END]
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [END]
         return;
     }
 #endif
@@ -202,11 +202,13 @@ static void powerkey_interrupt_handler(void* arg)
         return;
     }
     printk("powerkey_interrupt_handler\n");
-//20110324, , LP1 powerkey skip issue [START]
+
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [START]
     if(core_lock_on && key_wakeup_ISR==0){
         LP1_key_wake = 1;
     }
-//20110324, , LP1 powerkey skip issue [END]
+//20110324, cs77.ha@lge.com, LP1 powerkey skip issue [END]
+
 #ifdef POWERKEY_DELAYED_WORKQUEUE
     schedule_delayed_work(&powerKeyDevice->work, msecs_to_jiffies(20));
     wake_lock_timeout(&s_powerkey.wlock, msecs_to_jiffies(50));
@@ -345,7 +347,7 @@ static const struct attribute_group star_reset_group = {
     .attrs = star_reset_attributes,
 };
 #endif
-// 20110209  disable gpio interrupt during power-off  [START] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [START]
 //extern void muic_gpio_interrupt_mask();
 extern void keep_touch_led_on();
 
@@ -377,11 +379,11 @@ static struct attribute *star_poweroff_attributes[] = {
 static const struct attribute_group star_poweroff_group = {
     .attrs = star_poweroff_attributes,
 };
-// 20110209  disable gpio interrupt during power-off  [END] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [END] 
 
 
 #ifndef AP20_A03_POWERKEY_WAR
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP_SUSPEND_STATUS
 static int modem_suspend(struct platform_device *pdev, pm_message_t state)
 {
@@ -395,7 +397,7 @@ static int modem_resume(struct platform_device *pdev)
     return 0;
 }
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
 #endif
 
 static int __init powerkey_probe(struct platform_device *pdev)
@@ -404,7 +406,7 @@ static int __init powerkey_probe(struct platform_device *pdev)
     NvU32 pin, port;
     const NvOdmPeripheralConnectivity *con = NULL;
 
-//20101129, , idle current issue [START]
+//20101129, cs77.ha@lge.com, idle current issue [START]
     //GPIO configuration
     s_touchMaker.gpioHandle = NvOdmGpioOpen();
     port = 'x'-'a';
@@ -413,10 +415,10 @@ static int __init powerkey_probe(struct platform_device *pdev)
                                                     port, pin);
     NvOdmGpioConfig(s_touchMaker.gpioHandle, s_touchMaker.pinHandle, 
                     NvOdmGpioPinMode_InputData);
-//20101129, , idle current issue [END]
+//20101129, cs77.ha@lge.com, idle current issue [END]
 
 
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP_SUSPEND_STATUS
     //GPIO configuration
     s_modemCheck.gpioHandle = NvOdmGpioOpen();
@@ -443,7 +445,7 @@ static int __init powerkey_probe(struct platform_device *pdev)
     NvOdmGpioConfig(s_modemCheck.gpioHandle, s_modemCheck.pinHandle, 
                     NvOdmGpioPinMode_Output);
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
 
     memset(&s_powerkey, 0x00, sizeof(s_powerkey));
 
@@ -513,13 +515,13 @@ static int __init powerkey_probe(struct platform_device *pdev)
         goto err_input_device_register_fail;
     }
 
-//20100703, , PMIC reset [START]
+//20100703, cs77.ha@lge.com, PMIC reset [START]
     ret = sysfs_create_group(&pdev->dev.kobj, &star_pmic_group);
     if (ret) {
         printk(KERN_ERR "[star powerkey] sysfs_create_group ERROR\n");
         goto err_pmic_sysfs_fail;
     }
-//20100703, , PMIC reset [END]
+//20100703, cs77.ha@lge.com, PMIC reset [END]
     
     ret = sysfs_create_group(&pdev->dev.kobj, &star_hwsku_group);
     if (ret) {
@@ -533,13 +535,13 @@ static int __init powerkey_probe(struct platform_device *pdev)
         goto err_reset_sysfs_fail;
     }
 
-// 20110209  disable gpio interrupt during power-off  [START] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [START] 
     ret = sysfs_create_group(&pdev->dev.kobj, &star_poweroff_group);
     if (ret) {
         printk(KERN_ERR "[star powerkey] sysfs_create_group <star_poweroff_group> ERROR\n");
         goto err_input_device_register_fail;
     }
-// 20110209  disable gpio interrupt during power-off  [END] 
+// 20110209 byoungwoo.yoon@lge.com disable gpio interrupt during power-off  [END] 
 
     return 0;
 err_reset_sysfs_fail:    
@@ -566,31 +568,31 @@ err_open_gpio_fail:
 
 err_probe_fail:
 
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP_SUSPEND_STATUS
     NvOdmGpioReleasePinHandle(s_modemCheck.gpioHandle, s_modemCheck.pinHandle);
 err_modem_chk_gpio_pin_acquire_fail:
     NvOdmGpioClose(s_modemCheck.gpioHandle); 
 err_open_modem_chk_gpio_fail:
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
     return -ENOSYS;
 }
 
 static int powerkey_remove(struct platform_device *pdev)
 {
-//20100703, , PMIC reset [START]
+//20100703, cs77.ha@lge.com, PMIC reset [START]
     sysfs_remove_group(&pdev->dev.kobj, &star_pmic_group);
     sysfs_remove_group(&pdev->dev.kobj, &star_hwsku_group);
     sysfs_remove_group(&pdev->dev.kobj, &star_reset_group);
-//20100703, , PMIC reset [END]
+//20100703, cs77.ha@lge.com, PMIC reset [END]
     
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP_SUSPEND_STATUS
     NvOdmGpioReleasePinHandle(s_modemCheck.gpioHandle, s_modemCheck.pinHandle);
     NvOdmGpioClose(s_modemCheck.gpioHandle); 
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
 
     input_unregister_device(s_powerkey.inputDev);
     input_free_device(s_powerkey.inputDev);  
@@ -600,7 +602,7 @@ static int powerkey_remove(struct platform_device *pdev)
     
     NvOdmGpioReleasePinHandle(s_powerkey.gpioHandle, s_powerkey.pinHandle);
     NvOdmGpioClose(s_powerkey.gpioHandle);
-
+    
 #ifdef POWERKEY_DELAYED_WORKQUEUE
     wake_lock_destroy(&s_powerkey.wlock);
 #endif
@@ -665,7 +667,7 @@ int powerkey_resume(struct platform_device *dev)
 static struct platform_driver powerkey_driver = {
     .probe      = powerkey_probe,
     .remove     = powerkey_remove,
-//20100610, , sleep status gpio for modem [START]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [START]
 #ifdef AP20_A03_POWERKEY_WAR
     .suspend    = powerkey_suspend,
     .resume     = powerkey_resume,
@@ -675,7 +677,7 @@ static struct platform_driver powerkey_driver = {
     .resume     = modem_resume,
 #endif
 #endif
-//20100610, , sleep status gpio for modem [END]
+//20100610, cs77.ha@lge.com, sleep status gpio for modem [END]
     .driver = {
         .name   = "star_powerkey",
         .owner  = THIS_MODULE,
@@ -695,7 +697,7 @@ static void __exit powerkey_exit(void)
 module_init(powerkey_init);
 module_exit(powerkey_exit);
 
-MODULE_AUTHOR("");
+MODULE_AUTHOR("cs77.ha@lge.com");
 MODULE_DESCRIPTION("star power key");
 MODULE_LICENSE("GPL");
 

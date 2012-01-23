@@ -161,13 +161,13 @@ static const NvU32 s_NvOdmPinMuxConfig_VideoInput[] = {
 };
 
 static const NvU32 s_NvOdmPinMuxConfig_Display[] = {
-//20100725  add CPU Panel [START]
+//20100725 taewan.kim@lge.com add CPU Panel [START]
 #if defined(CONFIG_MACH_STAR)
     NvOdmDisplayPinMap_Config1,
 #else
     0, // RGB panel is not used
 #endif
-//20100725  add CPU Panel [END]
+//20100725 taewan.kim@lge.com add CPU Panel [END]
     0,
 };
 
@@ -208,13 +208,13 @@ static const NvU32 s_NvOdmPinMuxConfig_Ptm[] = {
 
 ///TODO: keep it here for now and might remove it.
 static const NvU32 s_NvOdmPinMuxConfig_Dsi[] = {
-//20100725  add CPU Panel [START]
+//20100725 taewan.kim@lge.com add CPU Panel [START]
 #if defined(CONFIG_MACH_STAR)
     0,
 #else
     NvOdmDapPinMap_Config1, // fake one, otherwise, ddk display will assert.
 #endif
-//20100725  add CPU Panel [END]
+//20100725 taewan.kim@lge.com add CPU Panel [END]
 };
 
 
@@ -398,22 +398,22 @@ NvOdmQueryPinMux(
         *pCount = NV_ARRAY_SIZE(s_NvOdmPinMuxConfig_BacklightPwm);
         break;
 
-//20100725  add CPU Panel [START]
+//20100725 taewan.kim@lge.com add CPU Panel [START]
 #if !defined(CONFIG_MACH_STAR)
     case NvOdmIoModule_Dsi:
         *pPinMuxConfigTable = s_NvOdmPinMuxConfig_Dsi;
         *pCount = NV_ARRAY_SIZE(s_NvOdmPinMuxConfig_Dsi);
         break;
 #endif
-//20100725  add CPU Panel [END]
+//20100725 taewan.kim@lge.com add CPU Panel [END]
 
     case NvOdmIoModule_Hsmmc:
     case NvOdmIoModule_Csi:
-//20100725  add CPU Panel [START]
+//20100725 taewan.kim@lge.com add CPU Panel [START]
 #if defined(CONFIG_MACH_STAR)
     case NvOdmIoModule_Dsi:
 #endif
-//20100725  add CPU Panel [END]
+//20100725 taewan.kim@lge.com add CPU Panel [END]
     case NvOdmIoModule_Sflash:
     case NvOdmIoModule_Slink:
     case NvOdmIoModule_Gpio:

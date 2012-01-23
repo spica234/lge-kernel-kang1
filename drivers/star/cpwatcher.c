@@ -745,7 +745,7 @@ static int cpwatcher_remove(struct platform_device *pdev)
 }
 
 #endif	//ENABLE_CP_HARD_RESET
-
+//LGSI_BSP_CHANGE Merge from Froyo [kirankumar.vm@lge.com][lgp990_gb]18042011 [End]
 
 static struct platform_driver cpwatcher_driver = {
 	.probe		= cpwatcher_probe,

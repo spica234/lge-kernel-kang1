@@ -4,7 +4,7 @@
 #include <linux/kthread.h>
 #include <linux/device.h>
 #include <linux/kernel.h>
-//#include <linux/tegra_devices.h>	//20100716  blocking for compile error [LGE]
+//#include <linux/tegra_devices.h>	//20100716 bergkamp.cho@lge.com blocking for compile error [LGE]
 
 #include <nvodm_services.h>
 
@@ -223,7 +223,7 @@ void star_headsetdet_bias(int bias)
     }
     return;
 }
-// 20110726 mic_bias [start]
+//heejeong.seo@lge.com 20110726 mic_bias [start]
 
 void star_Mic_bias(int bias)
 {
@@ -242,7 +242,7 @@ void star_Mic_bias(int bias)
 	WriteWolfsonRegister(g_wm8994, 0x0001, r_data);
 	return;
 }
-// 20110726 mic_bias [end]
+//heejeong.seo@lge.com 20110726 mic_bias [end]
 
 
 /**

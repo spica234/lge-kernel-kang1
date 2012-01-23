@@ -462,10 +462,10 @@ static int __init tegra_spi_probe(struct platform_device *pdev)
 		return -ENOMEM;
 	}
 
-//20100711-1, , add mode_bits [START]
+//20100711-1, syblue.lee@lge.com, add mode_bits [START]
 	/* the spi->mode bits understood by this driver: */
 	master->mode_bits = NV_SUPPORTED_MODE_BITS;
-//20100711, , add mode_bits [END]
+//20100711, syblue.lee@lge.com, add mode_bits [END]
 
 	master->setup = tegra_spi_setup;
 	master->transfer = tegra_spi_transfer;
@@ -477,7 +477,7 @@ static int __init tegra_spi_probe(struct platform_device *pdev)
 	spi = spi_master_get_devdata(master);
 
 	spi->pinmux = plat->pinmux;
-	spi->index = pdev->id;	//20100811-1, , Save spi dev id
+	spi->index = pdev->id;	//20100811-1, syblue.lee@lge.com, Save spi dev id
 
 	SPI_DEBUG_PRINT("tegra_spi_probe : NvRmSpiOpen\n");
 	if (plat->is_slink) { 
@@ -609,7 +609,7 @@ static void star_spi_shutdown(struct platform_device *pdev)
      printk("star_spi_shutdown :  completed\n");
 }
 
-//20100607-1, , power management	[START]
+//20100607-1, syblue.lee@lge.com, power management	[START]
 #ifdef CONFIG_PM
 static int tegra_spi_suspend(struct platform_device *pdev, pm_message_t msg)
 {
@@ -637,7 +637,7 @@ static int tegra_spi_resume(struct platform_device *pdev)
 	return 0;
 }
 #endif	
-//20100607, , power management	[START]
+//20100607, syblue.lee@lge.com, power management	[START]
 MODULE_ALIAS("platform:tegra_spi");
 static struct platform_driver tegra_spi_driver = {
 	.probe = tegra_spi_probe,
@@ -647,12 +647,12 @@ static struct platform_driver tegra_spi_driver = {
 		.name	= "tegra_spi",
 		.owner	= THIS_MODULE,
 	},
-//20100607-1, , power management	[START]
+//20100607-1, syblue.lee@lge.com, power management	[START]
 #ifdef CONFIG_PM
 			.suspend = tegra_spi_suspend,
 			.resume = tegra_spi_resume, 
 #endif	
-//20100607, , power management	[START]
+//20100607, syblue.lee@lge.com, power management	[START]
 };
 
 static int __init tegra_spi_init(void)
@@ -670,6 +670,6 @@ static void __exit tegra_spi_exit(void)
 }
 module_exit(tegra_spi_exit);
 
-MODULE_AUTHOR("Sangyun Lee, <>");
+MODULE_AUTHOR("Sangyun Lee, <syblue.lee@lge.com>");
 MODULE_DESCRIPTION("Tegra SPI slave driver");
 MODULE_LICENSE("GPL");
