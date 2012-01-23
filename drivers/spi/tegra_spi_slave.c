@@ -89,7 +89,7 @@ static bool        bOnce = 0;
 //LGE_TELECA_CR:568_DUAL_SPI END
 
 struct tegra_spi {
-	NvU32			index;		//20100811-1, , spi dev id
+	NvU32			index;		//20100811-1, syblue.lee@lge.com, spi dev id
 	NvRmSpiHandle		rm_spi;
 	NvU32			pinmux;
 	NvU32			Mode;
@@ -320,7 +320,7 @@ static int tegra_spi_do_message(struct tegra_spi *spi, struct spi_message *m)
 #endif
 #endif
 			if(nvErr != NvSuccess)
-			{	//20110120-1, , Add workaround code for short SCK
+			{	//20110120-1, syblue.lee@lge.com, Add workaround code for short SCK
 				printk("%s[ID:%d] : WaitTimeout error %d\n", __FUNCTION__, spi->index, nvErr);
 				NvRmSpiClose(spi->rm_spi);
 				nvErr = NvRmSpiOpen(s_hRmGlobal, NvOdmIoModule_Spi, spi->index, 0, &spi->rm_spi);
