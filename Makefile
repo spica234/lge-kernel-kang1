@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 32
-EXTRAVERSION = .54
+EXTRAVERSION = .55
 NAME = Man-Eating Seals of Antiquity
 
 # *DOCUMENTATION*
@@ -223,7 +223,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fomit-frame-pointer -pipe -w
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fomit-frame-pointer -pipe
 HOSTCXXFLAGS = -Ofast -pipe
 
 # Decide whether to build built-in, modular, or both.
@@ -325,12 +325,12 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-MODFLAGS  = -DMODULE -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -mfloat-abi=softfp -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
+MODFLAGS  = -DMODULE -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -mfloat-abi=hard -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -fpredictive-commoning -fgcse-after-reload -fipa-cp-clone -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
 CFLAGS_MODULE   = $(MODFLAGS) -pipe
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  = -T $(srctree)/scripts/module-common.lds
-CFLAGS_KERNEL  = -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -pipe -mfloat-abi=softfp -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
-AFLAGS_KERNEL  = -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -mfloat-abi=softfp -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
+CFLAGS_KERNEL  = -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -pipe -mfloat-abi=hard -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -fpredictive-commoning -fgcse-after-reload -fipa-cp-clone -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
+AFLAGS_KERNEL  = -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -fsingle-precision-constant -mfloat-abi=hard -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -funswitch-loops -fpredictive-commoning -fgcse-after-reload -fipa-cp-clone -funsafe-loop-optimizations -funsafe-math-optimizations -fbranch-target-load-optimize2
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 # 20100705, ,[LGE_START]
