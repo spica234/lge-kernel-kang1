@@ -154,6 +154,7 @@ static int conf_string(struct menu *menu)
 }
 
 static int conf_sym(struct menu *menu)
+
 {
 	struct symbol *sym = menu->sym;
 	int type;
