@@ -1,17 +1,36 @@
-#!/bin/sh
-# ANYKERNEL compiler script by vadonka v1.1.0
-# Date: 2012.01.28
+#!/bin/bash
+# ANYKERNEL compiler script by vadonka v1.1.1
+# Date: 2012.01.29
 #
 # You need to define this below:
 ######################################################
 # KERNEL home directory
 export kh=`pwd`
-# Compiled files home directory
+# Compiled CWM zip files home directory
 export ch=/home/android/android/compiled
 # CM7 original lge kernel boot.img location
 export cm7b=/home/android/android/cm7orig_kernel
 ######################################################
 
+# Check executables
+if [ -f /usr/bin/zip ]; then
+    if [ -f /usr/bin/unzip ]; then
+	if [ -f /usr/bin/abootimg ]; then
+	    echo "Required executables are found. OK!"
+	else
+	    echo "ERROR: abootimg not found! Please install"
+	    exit 0
+	fi
+    else
+	echo "ERROR: unzip not found! Please install"
+	exit 0
+    fi
+else
+    echo "ERROR: zip not found! Please install"
+    exit 0
+fi
+
+# Check variables
 if [ -z $1 ]; then
     export rh="0"
     echo "Ramhack: no ramhack defined"
@@ -57,7 +76,8 @@ if [ -e $kh/arch/arm/boot/zImage ]; then
 export kver=`echo $nver | awk 'BEGIN { FS = "=" } ; { print $2 }' | sed 's/"//g'`
 
 export cdir=`date +%y%m%d%H%M`$kver
-cp -r $ch/_empty $ch/$cdir
+mkdir -p $ch/$cdir
+unzip -qq empty.zip -d $ch/$cdir
 
 for m in `find $kh -name '*.ko'`; do
     cp $m $ch/$cdir/system/lib/modules
@@ -72,6 +92,6 @@ mbr:400:200:800,system:600:2bc00:800,cache:2c200:8000:800,misc:34200:400:800,\
 userdata:38700:c0000:800 androidboot.hardware=p990"
 abootimg -i $ch/$cdir/tmp/boot.img > $ch/$cdir/tmp/bootimg.info
 cd $ch/$cdir && zip -rq9 $ch/$cdir.zip .
-rm -rf $ch/$cdir
+cp $kh/arch/arm/boot/zImage $ch/$cdir/tmp
 
 fi
