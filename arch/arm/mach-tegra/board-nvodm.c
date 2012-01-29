@@ -89,15 +89,15 @@
 #endif
 
 //20100830, gunwoo1.kim, soft reset [START]
-#if defined(CONFIG_INPUT_KEYRESET) 
+#if defined(CONFIG_INPUT_KEYRESET)
 #include <linux/keyreset.h>
 #endif
 //20100830, gunwoo1.kim, soft reset [END]
 
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_START]
+//20100724  for poweroff leakage [LGE_START]
 #include "odm_kit/star/adaptations/pmu/max8907/max8907_supply_info_table.h"
 #include <linux/delay.h>
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_END]
+//20100724  for poweroff leakage [LGE_END]
 #include <linux/rtc.h>
 
 #if 1
@@ -308,12 +308,12 @@ struct platform_device star_reset_keys_device = {
 #endif
 //20100830, gunwoo1.kim, soft reset [END]
 
-// 20101111 BT: dohyung10.lee@lge.com - For the BD Address Read /write [Start]
+// 20101111 BT:  - For the BD Address Read /write [Start]
 struct platform_device star_bd_address_device = {
 	.name = "star_bd_address",
 	.id = -1,
 };
-// 20101111 BT: dohyung10.lee@lge.com - For the BD Address Read /write [End]
+// 20101111 BT:  - For the BD Address Read /write [End]
 
 
 #ifdef CONFIG_MMC_SDHCI_TEGRA
@@ -322,9 +322,9 @@ static struct tegra_sdhci_platform_data tegra_sdhci_platform[] = {
 	[0] = {
 		.bus_width = 4,
 		.debounce = 5,
-// 20100827 mingi.sung@lge.com [WLAN] NVIDIA bug fix - lock up after suspend [START]
+// 20100827  [WLAN] NVIDIA bug fix - lock up after suspend [START]
 		.is_always_on = 1,
-// 20100827 mingi.sung@lge.com [WLAN] NVIDIA bug fix - lock up after suspend [END]
+// 20100827  [WLAN] NVIDIA bug fix - lock up after suspend [END]
 	},
 	[1] = {
 		.bus_width = 4,
@@ -627,10 +627,10 @@ static void __init tegra_setup_hsuart(void)
 		if (i==dbg_id)
 			continue;
 
-//sunghoon.kim@lge.com, skip registering with useless uart port [START]
+//, skip registering with useless uart port [START]
        if ( 0 == odm_table[i] )
-                continue; 
-//sunghoon.kim@lge.com, skip registering with useless uart port [END]
+			continue;
+//, skip registering with useless uart port [END]
 		plat = &tegra_uart_platform[i];
 
 		snprintf(name, sizeof(name), "%s.%d",
@@ -1026,7 +1026,7 @@ static struct platform_device tegra_nvec_device = {
 };
 #endif
 
-//20100527, jh.ahn@lge.com, For Star Battery Driver [START]
+//20100527, , For Star Battery Driver [START]
 #if (defined(CONFIG_MACH_STAR) && defined(CONFIG_STAR_BATTERY_CHARGER))
 #ifndef CONFIG_TEGRA_BATTERY_ODM
 #error "You have to set defconfig(Device Drivers -> Power supply class support -> NVIDIA Tegra ODM kit battery driver)"
@@ -1043,7 +1043,7 @@ static struct platform_device tegra_battery_device = {
 	.id = -1,
 };
 #endif // CONFIG_MACH_STAR
-//20100527, jh.ahn@lge.com, For Star Battery Driver [END]
+//20100527, , For Star Battery Driver [END]
 
 #ifdef CONFIG_REGULATOR_TEGRA
 static struct regulator_consumer_supply pex_clk_consumers[] = {
@@ -1253,19 +1253,19 @@ static noinline void __init tegra_setup_rfkill(void)
 {
 	const NvOdmPeripheralConnectivity *con;
 	unsigned int i;
-/* 20100815 jaewoo56.lee@lge.com for bluetooth on [LGE_START] */
+/* 20100815  for bluetooth on [LGE_START] */
 
 	con = NvOdmPeripheralGetGuid(NV_ODM_GUID('b','l','u','t','o','o','t','h'));
 	if (!con)
 		return;
 
-	for (i=0; i<con->NumAddress; i++) {
+		for (i=0; i<con->NumAddress; i++) {
 		if (con->AddressList[i].Interface == NvOdmIoModule_Gpio) {
-			int nr_gpio = con->AddressList[i].Instance * 8 +
-				con->AddressList[i].Address;
-			lbee9qmb_platform.gpio_reset = nr_gpio;
-			if (platform_device_register(&lbee9qmb_device))
-				pr_err("%s: registration failed\n", __func__);
+				int nr_gpio = con->AddressList[i].Instance * 8 +
+					con->AddressList[i].Address;
+				lbee9qmb_platform.gpio_reset = nr_gpio;
+				if (platform_device_register(&lbee9qmb_device))
+					pr_err("%s: registration failed\n", __func__);
 
 #ifdef BRCM_BT_WAKE
 			int btwake_gpio = con->AddressList[3].Instance * 8 +
@@ -1281,10 +1281,10 @@ static noinline void __init tegra_setup_rfkill(void)
 #endif		
 #ifdef BRCM_BT_WAKE
 			if (platform_device_register(&lbee9qmb_btwake_device))
-				pr_err("%s: registration failed\n", __func__);
+			pr_err("%s: registration failed\n", __func__);
 #endif		
-			return;
-		}
+                return;
+        }
 	}
 /* ORIGINAL
 	lbee9qmb_platform.delay=5;
@@ -1327,7 +1327,7 @@ static noinline void __init tegra_setup_rfkill(void)
         }
         return;
 ORIGINAL */
-/* 20100815 jaewoo56.lee@lge.com for bluetooth on [LGE_END] */
+/* 20100815  for bluetooth on [LGE_END] */
 }
 #else
 static void tegra_setup_rfkill(void) { }
@@ -1400,7 +1400,7 @@ static struct platform_device tegra_gyro_accel_device =
 };
 #endif
 
-//20100526 sk.hwang@lge.com, For Compass Driver [start]
+//20100526 , For Compass Driver [start]
 #ifdef CONFIG_STAR_COMPASS
 static struct platform_device star_compass_device =
 {
@@ -1505,10 +1505,10 @@ static struct platform_device star_compass_device =
 	.id	  = -1,
 };
 #endif
-// 20100917 jay.sim@lge.com, Temp for Sensor Modulazation --
+// 20100917 , Temp for Sensor Modulazation --
 
 
-//20100526 sk.hwang@lge.com, For Vibrator Driver [start]
+//20100526 , For Vibrator Driver [start]
 #ifdef CONFIG_STAR_VIBRATOR
 static struct platform_device star_vib_device =
 {
@@ -1516,9 +1516,9 @@ static struct platform_device star_vib_device =
     .id   = -1,
 };
 #endif
-//20100526 sk.hwang@lge.com, For Vibrator Driver [end]
+//20100526 , For Vibrator Driver [end]
 
-#ifdef CONFIG_STAR_HALL //20100903 sk.hwang@lge.com
+#ifdef CONFIG_STAR_HALL //20100903 
 static struct platform_device star_hall_device =
 {
     .name = "star_hall",
@@ -1539,7 +1539,7 @@ static struct platform_device tegra_vibrator_device = {
 	.id = -1,
 };
 #endif
-//20100401 taewan.kim@lge.com MUIC driver [START]
+//20100401  MUIC driver [START]
 #if defined(CONFIG_MACH_STAR)
 static struct platform_device star_muic_device =
 {
@@ -1556,9 +1556,9 @@ static struct platform_device star_proximity_device =
     .id   = -1,
 };
 #endif
-// 20100526 sk.hwang@lge.com Proximity driver [END]
+// 20100526  Proximity driver [END]
 
-//20100413, cs77.ha@lge.com, star powerkey [START]
+//20100413, , star powerkey [START]
 #ifdef CONFIG_MACH_STAR
 #ifdef CONFIG_STAR_POWERKEY
 static struct platform_device star_powerkey =
@@ -1569,7 +1569,7 @@ static struct platform_device star_powerkey =
 #endif
 
 
-//20100611, cs77.ha@lge.com, touch LED [START]
+//20100611, , touch LED [START]
 #ifdef CONFIG_STAR_TOUCH_LED
 static struct platform_device star_touch_led =
 {
@@ -1578,9 +1578,9 @@ static struct platform_device star_touch_led =
 };
 
 #endif
-//20100611, cs77.ha@lge.com, touch LED [END]
+//20100611, , touch LED [END]
 
-//20100702, cs77.ha@lge.com, HDMI regulator [START]
+//20100702, , HDMI regulator [START]
 #ifdef CONFIG_STAR_HDMI_REG
 static struct platform_device star_hdmi_reg =
 {
@@ -1588,17 +1588,17 @@ static struct platform_device star_hdmi_reg =
     .id   = -1,
 };
 #endif
-//20100702, cs77.ha@lge.com, HDMI regulator [END]
+//20100702, , HDMI regulator [END]
 
 #endif
-//20100413, cs77.ha@lge.com, star powerkey [END]
+//20100413, , star powerkey [END]
 
 
-//20100419 bergkamp.cho@lge.com headset detection [LGE_START]
+//20100419  headset detection [LGE_START]
 #if defined(CONFIG_MACH_STAR)
 static struct gpio_switch_platform_data star_headset_data = {
 	.name = "h2w",
-    .gpio = 170,	//20100419 bergkamp.cho@lge.com GPIO Index, not used for nVidia gpio
+    .gpio = 170,	//20100419  GPIO Index, not used for nVidia gpio
 };
 static struct platform_device star_headset_device = {
 	.name		= "star_headset",
@@ -1606,17 +1606,17 @@ static struct platform_device star_headset_device = {
 	.dev.platform_data = &star_headset_data,
 };
 #endif
-//20100419 bergkamp.cho@lge.com headset detection [LGE_END]
+//20100419  headset detection [LGE_END]
 
-//LGE_UPDATE_S neo.shin@lge.com 2010-05-024 GPS UART & GPIO Setting
+//LGE_UPDATE_S  2010-05-024 GPS UART & GPIO Setting
 static struct platform_device tegra_gps_gpio =
 {
     .name = "tegra_gps_gpio",
     .id   = -1,
 };
-//LGE_UPDATE_E neo.shin@lge.com 2010-05-024 GPS UART & GPIO Setting
+//LGE_UPDATE_E  2010-05-024 GPS UART & GPIO Setting
 
-//20100704 bergkamp.cho@lge.com jongik's headset porting [LGE_START]
+//20100704  jongik's headset porting [LGE_START]
 #if defined(CONFIG_MACH_STAR)
 static struct platform_device star_wm8994_pdevice =
 {
@@ -1656,8 +1656,8 @@ static struct platform_device ram_console_device = {
         .num_resources  = ARRAY_SIZE(ram_console_resource),
         .resource       = ram_console_resource,
 };
-#endif 
-//20100701 sunghoon.kim@lge.com crashdump  [LGE_END]
+#endif
+//20100701  crashdump  [LGE_END]
 
 static struct platform_device *nvodm_devices[] __initdata = {
 #ifdef CONFIG_RTC_DRV_TEGRA
@@ -1669,13 +1669,13 @@ static struct platform_device *nvodm_devices[] __initdata = {
 #ifdef CONFIG_TEGRA_NVEC
 	&tegra_nvec_device,
 #endif
-//20100527, jh.ahn@lge.com, For Star Battery Driver [START]
+//20100527, , For Star Battery Driver [START]
 #if (defined(CONFIG_MACH_STAR) && defined(CONFIG_STAR_BATTERY_CHARGER))
 	&star_battery_charger_device,
 #elif defined(CONFIG_TEGRA_BATTERY_NVEC) || defined(CONFIG_TEGRA_BATTERY_ODM)
 	&tegra_battery_device,
 #endif // CONFIG_MACH_STAR
-//20100527, jh.ahn@lge.com, For Star Battery Driver [END]
+//20100527, , For Star Battery Driver [END]
 #ifdef CONFIG_REGULATOR_TEGRA
 	&tegra_regulator_device,
 #endif
@@ -1712,7 +1712,7 @@ static struct platform_device *nvodm_devices[] __initdata = {
 #endif
 
 #ifdef CONFIG_STAR_HALL
-    &star_hall_device,
+	&star_hall_device,
 #endif
 
 #if defined(CONFIG_STAR_MUIC) || defined(CONFIG_STAR_MUIC_TI)
@@ -1775,7 +1775,7 @@ static struct spi_board_info tegra_spi_board_info[] __initdata = {
         .chip_select = 0,
         .mode = SPI_MODE_1,
         .max_speed_hz = 24000000,
-//        .platform_data = NULL,//Â°Ã‹Ã…Ã¤ 
+//        .platform_data = NULL,//°ËÅä
         .irq = 0,
     },
 };
@@ -1787,13 +1787,13 @@ static void __init tegra_register_ifxn721(void)
     NvU32 instance = 0xFFFF;
     NvU32 cs = 0xFFF;
 	NvU32 pin = 0xFFFF, port = 0xFFFF;	//SPI_SRDY
-	NvU32 pin2 = 0xFFFF, port2 = 0xFFFF; //SPI_MRDY	//20100607, syblue.lee@lge.com, Add spi_mrdy
+	NvU32 pin2 = 0xFFFF, port2 = 0xFFFF; //SPI_MRDY	//20100607, , Add spi_mrdy
     const NvOdmPeripheralConnectivity *pConnectivity = NULL;
     int i;
     const NvOdmQuerySpiDeviceInfo *pSpiDeviceInfo;
 
     pConnectivity =
-        NvOdmPeripheralGetGuid(NV_ODM_GUID('s','t','a','r','-','s','p','i'));	//20100607, syblue.lee@lge.com, modify ifxn-721 -> star-spi
+        NvOdmPeripheralGetGuid(NV_ODM_GUID('s','t','a','r','-','s','p','i'));	//20100607, , modify ifxn-721 -> star-spi
 	
     if (!pConnectivity){
 	 printk("[tegra_spi]pConnectivity = %d \n", (int)pConnectivity);
@@ -1814,7 +1814,7 @@ static void __init tegra_register_ifxn721(void)
 			   port = pConnectivity->AddressList[i].Instance;
 			   pin = pConnectivity->AddressList[i].Address;
 		}
-		else //20100607, syblue.lee@lge.com, add spi_mrdy
+		else //20100607, , add spi_mrdy
 		{
 			   port2 = pConnectivity->AddressList[i].Instance;
 			   pin2 = pConnectivity->AddressList[i].Address;
@@ -1826,8 +1826,8 @@ static void __init tegra_register_ifxn721(void)
     }
 
     /* SPI ethernet driver needs one SPI info and a gpio for interrupt */
-    if (instance == 0xffff || cs == 0xffff || port == 0xFFFF || pin == 0xFFFF 
-		|| port2 == 0xFFFF || pin2 == 0xFFFF){	//20100607, syblue.lee@lge.com, add spi_mrdy
+    if (instance == 0xffff || cs == 0xffff || port == 0xFFFF || pin == 0xFFFF
+		|| port2 == 0xFFFF || pin2 == 0xFFFF){	//20100607, , add spi_mrdy
 	 printk("[tegra_spi]instance = %d, cs = %d, srdy[%d-%d], mrdy[%d-%d]\n", instance, cs, port, pin, port2, pin2);
         return;
     }
@@ -1860,14 +1860,14 @@ static void __init tegra_register_ifxn721(void)
     spi_register_board_info(tegra_spi_board_info, ARRAY_SIZE(tegra_spi_board_info));
 }
 #endif /*CONFIG_SPI_TEGRA*/
-//20100711, syblue.lee@lge.com, add spi_ifxn721 [END]
+//20100711, , add spi_ifxn721 [END]
 
 #if defined(CONFIG_SPI_TEGRA) && !defined(CONFIG_SPI_SLAVE_TEGRA)
 static struct tegra_spi_platform_data tegra_spi_platform[] = {
 	[0] = {
-//20100711-1, syblue.lee@lge.com, add pinmux [START]
+//20100711-1, , add pinmux [START]		
 		.pinmux = NvOdmSpiPinMap_Config1,
-//20100711, syblue.lee@lge.com, add pinmux [END]
+//20100711, , add pinmux [END]
 		.is_slink = true,
 	},
 #if 0	
@@ -1979,15 +1979,15 @@ static noinline void __init tegra_setup_spi(void)
 		}
 	}
 
-//20100711-1, syblue.lee@lge.com, add spi_ifxn721 [START]
+//20100711-1, , add spi_ifxn721 [START]
 	tegra_register_ifxn721();
-//20100711, syblue.lee@lge.com, add spi_ifxn721 [END]
+//20100711, , add spi_ifxn721 [END]
 }
 #else
 static void tegra_setup_spi(void) { }
 #endif
 
-//20100613-1, syblue.lee@lge.com, add spi slave [START]
+//20100613-1, , add spi slave [START]
 #if defined(CONFIG_SPI_MDM6600)
 #include <linux/spi/spi.h>
 
@@ -1998,10 +1998,10 @@ static struct spi_board_info tegra_spi_board_info[] __initdata = {
         .chip_select = 0,
         .mode = SPI_MODE_1,
         .max_speed_hz = 24000000,
-//        .platform_data = NULL,//Â°Ã‹Ã…Ã¤ 
+//        .platform_data = NULL,//°ËÅä 
         .irq = 0,
     },
-//20100809-1, syblue.lee@lge.com, Add SPI2 for AP-CP IPC [START]
+//20100809-1, , Add SPI2 for AP-CP IPC [START]
 #ifdef CONFIG_DUAL_SPI
 	{
 		.modalias = "mdm6600",
@@ -2009,11 +2009,11 @@ static struct spi_board_info tegra_spi_board_info[] __initdata = {
 		.chip_select = 0,
 		.mode = SPI_MODE_1,
 		.max_speed_hz = 24000000,
-//		  .platform_data = NULL,//Â°Ã‹Ã…Ã¤ 
+//		  .platform_data = NULL,//°ËÅä 
 		.irq = 0,
 	},
 #endif
-//20100809, syblue.lee@lge.com, Add SPI2 for AP-CP IPC [END]
+//20100809, , Add SPI2 for AP-CP IPC [END]
 };
 
 static void __init register_mdm6600(void)
@@ -2071,7 +2071,7 @@ static void __init register_mdm6600(void)
 	* */
 	pSpiDeviceInfo = NvOdmQuerySpiGetDeviceInfo(NvOdmIoModule_Spi, instance, cs);
 		printk("%s#%d : instance = %d, cs = %d\n",__FUNCTION__, id, instance, cs);
-//20100613-1, syblue.lee@lge.com, add spi slave mode [START]
+//20100613-1, , add spi slave mode [START]
 	if (pSpiDeviceInfo && pSpiDeviceInfo->IsSlave)
 	{	//slave mode ; mrdy pin works as interrupt
 #ifndef CONFIG_MACH_STAR_TMUS
@@ -2101,10 +2101,10 @@ static void __init register_mdm6600(void)
 	spi_register_board_info(tegra_spi_board_info, ARRAY_SIZE(tegra_spi_board_info));
 }
 #endif /*CONFIG_SPI_MDM6600*/
-//20100613-1, syblue.lee@lge.com, add spi slave [END]
+//20100613-1, , add spi slave [END]
 
 
-//20100613-1, syblue.lee@lge.com, add spi slave [START]
+//20100613-1, , add spi slave [START]
 #if !defined(CONFIG_SPI_SLAVE_TEGRA) 
 #define tegra_setup_spi_slave() do {} while (0)
 #else
@@ -2217,12 +2217,12 @@ static noinline void __init tegra_setup_spi_slave(void)
 		}
 	}
 
-//20100711-1, syblue.lee@lge.com, add spi_ifxn721 [START]
+//20100711-1, , add spi_ifxn721 [START]
 	register_mdm6600();
-//20100711, syblue.lee@lge.com, add spi_ifxn721 [END]
+//20100711, , add spi_ifxn721 [END]
 }
 #endif	//CONFIG_SPI_SLAVE_TEGRA
-//20100613, syblue.lee@lge.com, add spi slave [END]
+//20100613, , add spi slave [END]
 
 #ifdef CONFIG_I2C_TEGRA
 #ifdef CONFIG_TEGRA_ODM_VENTANA
@@ -2601,7 +2601,7 @@ static int tegra_setup_pcie(void)
 late_initcall(tegra_setup_pcie);
 #endif
 
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_START]
+//20100724  for poweroff leakage [LGE_START]
 #define MAX_COUNT 10
 void tegra_voltage_off( NvU32 vddId )
 {
@@ -2629,14 +2629,14 @@ void tegra_voltage_off( NvU32 vddId )
 		pr_info("[POWER] %s: LOD=%d (count=%d) success !!	\n", __func__, vddId-4, count);
 	}
 }
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_END]
+//20100724  for poweroff leakage [LGE_END]
 
 static void tegra_system_power_off(void)
 {
 	struct regulator *regulator = regulator_get(NULL, "soc_main");
 	printk("tegra_system_power_off\n");
 
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_START]
+//20100724  for poweroff leakage [LGE_START]
     #if 0
 	u32 settling_time;
 
@@ -2654,7 +2654,7 @@ static void tegra_system_power_off(void)
 	tegra_voltage_off(Max8907PmuSupply_LDO4);
 	tegra_voltage_off(Max8907PmuSupply_LDO5);	
     #endif
-//20100724 byoungwoo.yoon@lge.com for poweroff leakage [LGE_END]
+//20100724  for poweroff leakage [LGE_END]
 
 
 	if (!IS_ERR(regulator)) {
@@ -3026,4 +3026,3 @@ void tegra_board_nvodm_resume(void)
         tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_SDD, TEGRA_PUPD_PULL_UP);
 #endif
 }
-

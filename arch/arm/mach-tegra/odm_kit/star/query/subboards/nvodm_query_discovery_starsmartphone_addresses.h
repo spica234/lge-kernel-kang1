@@ -43,7 +43,7 @@
 #include "pmu/max8907/max8907_supply_info_table.h"
 #include "tmon/adt7461/nvodm_tmon_adt7461.h"
 
-//20100426 sk.hwang@lge.com For global definition
+//20100426  For global definition
 //#include <star_global_definition.h>
 #include <star_hw_definition.h>
 #include <star_pinmux_definition.h>
@@ -62,29 +62,29 @@ static const NvOdmIoAddress s_lge_Tmon0Addresses[] =
 #endif
 
 #if defined(CONFIG_MACH_STAR)
-//20100413, cs77.ha@lge.com, power off [START]
+//20100413, , power off [START]
 static const NvOdmIoAddress s_lge_SocOdmAddresses[] =
 {
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_SOC, 0 },
 };
-//20100413, cs77.ha@lge.com, power off [END]
+//20100413, , power off [END]
 
-//20100703, cs77.ha@lge.com, power reset [START]
+//20100703, , power reset [START]
 static const NvOdmIoAddress s_lge_PowerResetAddresses[] =
 {
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_reset, 0 },
 };
-//20100703, cs77.ha@lge.com, power reset [END]
+//20100703, , power reset [END]
 #endif
 
-//20100413, cs77.ha@lge.com, powerkey [START]
+//20100413, , powerkey [START]
 #if defined(CONFIG_MACH_STAR)
 static const NvOdmIoAddress s_lge_PowerKeyAddresses[] =
 {
     { NvOdmIoModule_Gpio, 'v' - 'a' , 2, 0 },
 };
 #endif
-//20100413, cs77.ha@lge.com, powerkey [END]
+//20100413, , powerkey [END]
 
 static const NvOdmIoAddress s_lge_HdmiAddresses[] =
 {
@@ -125,13 +125,13 @@ static const NvOdmIoAddress s_lge_CoreAddresses[] =
 // CPU voltage rail
 static const NvOdmIoAddress s_lge_CpuAddresses[] = 
 {
-//20100725 taewan.kim@lge.com add MAX8907C FEATURE [START]
+//20100725  add MAX8907C FEATURE [START]
 #if defined(CONFIG_MACH_STAR)
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_EXT_DCDC_8_CPU, 0 },  /* VDD_CPU_PMU -> V1 */
 #else
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LX_V1, 0 },  /* VDD_CPU_PMU -> V1 */
 #endif
-//20100725 taewan.kim@lge.com add MAX8907C FEATURE [END]
+//20100725  add MAX8907C FEATURE [END]
 };
 #endif
 
@@ -338,16 +338,16 @@ static const NvOdmIoAddress s_lge_SdioAddresses[] =
     { NvOdmIoModule_Sdio, 0x3, 0x0, 0 }, // eMMC
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO12, 0 }, // 2.8V microSD(VDDIO_SDIO) 
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LX_V3, 0 }, // 1.8V eMMC VCCQ & microSD detect(VDDIO_NAND)
-    //20100727 cs77.ha@lge.com it should be always on for (a03 deepsleep isseu) work around [START]
+    //20100727 it should be always on for (a03 deepsleep isseu) work around [START]
     #if defined(CONFIG_MACH_STAR)
     //do nothing
     #else
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO5, 0 }, // eMMC 2.8V VCC
     #endif
-    //20100727 cs77.ha@lge.com it should be always on for (a03 deepsleep isseu) work around [END]
+    //20100727 it should be always on for (a03 deepsleep isseu) work around [END]
 };
 
-//Vibrator sk.hwang@lge.com for vibrator 
+//Vibrator  for vibrator 
 static const NvOdmIoAddress s_lge_VibAddresses[] =
 {
     { NvOdmIoModule_Vdd, 0x0, Max8907PmuSupply_LDO13, 0 }, // VCC_MOTOR_3V0
@@ -365,7 +365,7 @@ static const NvOdmIoAddress s_lge_AccelerometerAddresses[] =
     { NvOdmIoModule_Vdd,  0x00, Max8907PmuSupply_LDO8 , 0 },  /* LDO8 1.8V VCC_SENSOR_1V8*/
 };
 
-//Compass sk.hwang@lge.com
+//Compass 
 static const NvOdmIoAddress s_lge_CompassAddresses[] =
 {
     { NvOdmIoModule_I2c,  0x01, 0x0e, 0 }, /* I2C device address is 0x0F */
@@ -382,14 +382,14 @@ static const NvOdmIoAddress s_lge_GyroAddresses[] =
     { NvOdmIoModule_Vdd,  0x00, Max8907PmuSupply_LDO8 , 0 },  /* LDO8 1.8V VCC_SENSOR_1V8*/
 };
 
-//Proximity sk.hwang@lge.com
+//Proximity 
 static const NvOdmIoAddress s_lge_ProximityAddresses[] =
 {
 	{ NvOdmIoModule_I2c,  0x01, 0x44, 0 }, /* I2C device address is 0x44 */
 #if defined (CONFIG_MACH_STAR_MDM_C)
 	{ NvOdmIoModule_Gpio, 'r' - 'a', 2, 0 }, 
 #else
-	{ NvOdmIoModule_Gpio, 'w' - 'a', 2, 0 },
+	{ NvOdmIoModule_Gpio, 'w' - 'a', 2, 0 }, 
 #endif
 	{ NvOdmIoModule_Vdd,  0x00, Max8907PmuSupply_LDO7 , 0 },  /* LDO8 1.8V VCC_SENSOR_1V8*/
 	{ NvOdmIoModule_Vdd,  0x00, Max8907PmuSupply_LDO8, 0 },   /* LDO7 3.0v VCC_SENSOR_3V0 */
@@ -410,7 +410,7 @@ static const NvOdmIoAddress s_lge_MainDisplayAddresses[] =
 {
     { NvOdmIoModule_Display, 0, 0, 0 },
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LX_V3, 0 },   /* VDDIO_LCD -> V3 */
-//20100725 taewan.kim@lge.com add CPU Interface [START]
+//20100725  add CPU Interface [START]
 #if defined(CONFIG_MACH_STAR)
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO3 , 0 },  // NVVDD_LDO3_1V8
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO14 , 0 },  // NVVDD_LDO14_2V8
@@ -418,7 +418,7 @@ static const NvOdmIoAddress s_lge_MainDisplayAddresses[] =
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO17 , 0 },  /* MIPI DSI 1.2V */
     { NvOdmIoModule_Gpio, (NvU32)('v' - 'a'), 7, 0 },
 #endif
-//20100725 taewan.kim@lge.com add CPU Interface [END]
+//20100725  add CPU Interface [END]
 };
 
 #if 0
@@ -441,7 +441,7 @@ static const NvOdmIoAddress s_lge_TouchPanelAddresses[] =
 #endif
 
 #if defined(CONFIG_MACH_STAR)
-// 20100527 joseph.jung@lge.com Synaptics/Cypress Touch support [START]
+// 20100527  Synaptics/Cypress Touch support [START]
 static const NvOdmIoAddress s_lge_SynapticsTouchAddresses[] = 
 {
 	{ NvOdmIoModule_I2c, 0x00, 0x20, 0 },						/* GEN1_I2C instance = 0x00, Touch IC I2C Address = 0x20 */
@@ -457,10 +457,10 @@ static const NvOdmIoAddress s_lge_CypressTouchAddresses[] =
 	{ NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO10, 0 },		// TOUCH_VCC_3V1
 	{ NvOdmIoModule_I2c_Pmu, 0x00, Max8907PmuSupply_LDO19, 0 },	// TOUCH_I2C_1V8
 };
-// 20100527 joseph.jung@lge.com Synaptics/Cypress Touch support [END]
+// 20100527  Synaptics/Cypress Touch support [END]
 #endif
 
-// 20100401 taewan.kim@lge.com MUIC driver [START]
+// 20100401  MUIC driver [START]
 #if defined (CONFIG_MACH_STAR)
 static const NvOdmIoAddress s_lge_MuicAddresses[] = 
 {
@@ -477,9 +477,9 @@ static const NvOdmIoAddress s_lge_MuicAddresses[] =
 #endif
 };
 #endif
-// 20100401 taewan.kim@lge.com MUIC driver [END]
+// 20100401  MUIC driver [END]
 
-//20100609, jh.ahn@lge.com, Charger IC Driver [START]
+//20100609, , Charger IC Driver [START]
 #if defined (CONFIG_MACH_STAR)
 static const NvOdmIoAddress s_lge_ChargerAddresses[] =
 {
@@ -488,7 +488,7 @@ static const NvOdmIoAddress s_lge_ChargerAddresses[] =
 	{ NvOdmIoModule_Gpio, 'q' - 'a', 2, 0 }, /* CHG_PGB_N */
 };
 #endif
-//20100609, jh.ahn@lge.com, Charger IC Driver [END]
+//20100609, , Charger IC Driver [END]
 
 static const NvOdmIoAddress s_lge_BackLightAddresses[] = 
 {
@@ -572,7 +572,7 @@ static const NvOdmIoAddress s_lge_CPdeviceAddresses[] =
 #endif /* CONFIG_SPI_MDM6600 */
 };
 #endif /* CONFIG_MACH_STAR */
-//20100730 kyungsik.lee@lge.com [LGE_END]
+//20100730  [LGE_END]
 
 
 typedef enum
@@ -623,7 +623,7 @@ static const NvOdmIoAddress s_lge_KeyPadAddresses[] =
     { NvOdmIoModule_Kbd, 0x01, NvOdmKbcGpioPin_KBCol1, 0 },    // Column 1
 };
 
-//LGE_UPDATE_S neo.shin@lge.com 2010-05-024 GPS UART & GPIO Setting
+//LGE_UPDATE_S  2010-05-024 GPS UART & GPIO Setting
 static const NvOdmIoAddress s_lge_GPSAddresses[] =
 {
     { NvOdmIoModule_Uart, 0x3,  0x0, 0 }, 		//Instance 3 means UART4.
@@ -631,18 +631,18 @@ static const NvOdmIoAddress s_lge_GPSAddresses[] =
     { NvOdmIoModule_Gpio, 'j' - 'a', 2, 0 }, 	// GPIO_PJ2 -poweron
     { NvOdmIoModule_Gpio, 'd' - 'a', 0, 0 }, 	// GPIO_PD0 -External LNA
 };
-//LGE_UPDATE_E neo.shin@lge.com 2010-05-024 GPS UART & GPIO Setting
+//LGE_UPDATE_E  2010-05-024 GPS UART & GPIO Setting
 
 
-//20100611, cs77.ha@lge.com, Touch LED [START]
+//20100611, , Touch LED [START]
 static const NvOdmIoAddress s_lge_TouchLEDAddresses[] = 
 {
 	{ NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_WHITE_LED, 0 },   //Touch LED
 };
-//20100611, cs77.ha@lge.com, Touch LED [END]
+//20100611, , Touch LED [END]
 
 
-//20100603, cs77.ha@lge.com, star pmic [START]
+//20100603, , star pmic [START]
 #ifdef CONFIG_STAR_PMIC
 static const NvOdmIoAddress s_lge_AllRailAddresses[] =
 {
@@ -668,5 +668,5 @@ static const NvOdmIoAddress s_lge_AllRailAddresses[] =
     { NvOdmIoModule_Vdd, 0x00, Max8907PmuSupply_LDO20, 0 },
 };
 #endif
-//20100603, cs77.ha@lge.com, star pmic [END]
+//20100603, , star pmic [END]
 

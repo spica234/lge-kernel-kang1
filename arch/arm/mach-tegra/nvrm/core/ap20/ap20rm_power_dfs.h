@@ -242,17 +242,11 @@ extern "C"
  * If thresholds are set to 0, the values are derived at run time from the
  * characterization data
  */
-#ifdef CONFIG_NVRM_CPU1_CORE_BOOST
-#define NVRM_CPU1_ON_MIN_KHZ (CONFIG_CPU1_ON_MIN_KHZ_BOOSTED)
-#define NVRM_CPU1_OFF_MAX_KHZ (CONFIG_CPU1_OFF_MAX_KHZ_BOOSTED)
-#define NVRM_CPU1_ON_PENDING_MS (CONFIG_CPU1_ON_PENDING_MS_BOOSTED)
-#define NVRM_CPU1_OFF_PENDING_MS (CONFIG_CPU1_OFF_PENDING_MS_BOOSTED) 
-#else
-#define NVRM_CPU1_ON_MIN_KHZ (CONFIG_CPU1_ON_MIN_KHZ)
-#define NVRM_CPU1_OFF_MAX_KHZ (CONFIG_CPU1_OFF_MAX_KHZ)
-#define NVRM_CPU1_ON_PENDING_MS (CONFIG_CPU1_ON_PENDING_MS)
-#define NVRM_CPU1_OFF_PENDING_MS (CONFIG_CPU1_OFF_PENDING_MS)
-#endif
+#define NVRM_CPU1_ON_MIN_KHZ (655000)
+#define NVRM_CPU1_OFF_MAX_KHZ (655000)
+
+#define NVRM_CPU1_ON_PENDING_MS (300)
+#define NVRM_CPU1_OFF_PENDING_MS (600)
 
 /**
  * Defines AP20 Thermal policy parameters.
@@ -287,7 +281,8 @@ extern "C"
 
 /// Default low corners for core and dedicated CPU voltages
 #define NVRM_AP20_LOW_CORE_MV (950)
-#define NVRM_AP20_LOW_CPU_MV (750)
+//#define NVRM_AP20_LOW_CPU_MV (750) /* Voltage fix for some hardware */
+#define NVRM_AP20_LOW_CPU_MV (770)
 /// Core voltage in suspend
 #define NVRM_AP20_SUSPEND_CORE_MV (1000)
 
@@ -392,7 +387,7 @@ NvRmPrivAp20DttPolicyUpdate(
     NvS32 TemperatureC,
     NvRmDtt* pDt);
 
-//20101121 cs77.ha@lge.com, HW power off in thermal limit [START]
+//20101121 , HW power off in thermal limit [START]
 #if defined(CONFIG_MACH_STAR)
 void
 NvRmPrivStarDttPolicyUpdate(
@@ -401,7 +396,7 @@ NvRmPrivStarDttPolicyUpdate(
     NvRmDtt* pDt);
 
 #endif
-//20101121 cs77.ha@lge.com, HW power off in thermal limit [END]
+//20101121 , HW power off in thermal limit [END]
 
 /**
  * Throttles DFS target clocks.

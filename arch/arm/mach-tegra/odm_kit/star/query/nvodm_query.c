@@ -71,6 +71,7 @@ static const NvOdmDownloadTransport
 s_NvOdmQueryDownloadTransportSetting = NvOdmDownloadTransport_None;
 
 
+
 #if defined(CONFIG_MACH_STAR)	//	Updated by nVidia, 2010.12.7
 static const NvOdmSdramControllerConfigAdv s_NvOdmStarSmartphoneHynixEmcConfigTable[] =
 {
@@ -796,7 +797,7 @@ static NvOdmWakeupPadInfo s_NvOdmWakeupPadInfo[] =
 #else
 #error STAR_HW not assigned
 #endif
-//20100413, cs77.ha@lge.com, wakeup control [END]
+//20100413, , wakeup control [END]
 
 /* --- Function Implementations ---*/
 
@@ -920,7 +921,7 @@ NvOdmQuerySpiGetDeviceInfo(
     return NULL;
 }
 
-//20101204-1, syblue.lee@lge.com, NVIDIA's patch for setting signal level during idle state [START]
+//20101204-1, , NVIDIA's patch for setting signal level during idle state [START]
 static const NvOdmQuerySpiIdleSignalState s_NvOdmQuerySpiIdleSignalStateLevel[] = 
 { 
 	{NV_FALSE, NvOdmQuerySpiSignalMode_1, NV_FALSE} // Spi 1 
@@ -1251,7 +1252,7 @@ NvBool NvOdmQueryGetPmuProperty(NvOdmPmuProperty* pPmuProperty)
     pPmuProperty->IrqConnected = NV_FALSE;
 #endif
 
-    pPmuProperty->IrqConnected = NV_TRUE; // 20100928, byoungwoo.yoon@lge.com, RTC alarm enable
+    pPmuProperty->IrqConnected = NV_TRUE; // 20100928, , RTC alarm enable 
 
     pPmuProperty->PowerGoodCount = 0x7E;
     pPmuProperty->IrqPolarity = NvOdmInterruptPolarity_Low;
@@ -1262,33 +1263,33 @@ NvBool NvOdmQueryGetPmuProperty(NvOdmPmuProperty* pPmuProperty)
     pPmuProperty->CorePowerReqPolarity = NvOdmCorePowerReqPolarity_High;
     pPmuProperty->SysClockReqPolarity = NvOdmSysClockReqPolarity_High;
 #ifndef CONFIG_MACH_STAR
-	//20100917 cs77.ha@lge.com one PMIC (max8907B)
+	//20100917 one PMIC (max8907B)
     pPmuProperty->CombinedPowerReq = NV_TRUE;
 #else
-	//20100917 cs77.ha@lge.com CPU power separated (max8907C + max8952)
+	//20100917 CPU power separated (max8907C + max8952)
     pPmuProperty->CombinedPowerReq = NV_FALSE;
 #endif
     pPmuProperty->CpuPowerGoodUs = 2000;
     pPmuProperty->AccuracyPercent = 3;
 
-    //20100917 cs77.ha@lge.com system hang issue.
+    //20100917 system hang issue.
 #ifndef CONFIG_MACH_STAR
-	//20100917 cs77.ha@lge.com voltage output is restored to default level (max8907)
+	//20100917 voltage output is restored to default level (max8907)
     pPmuProperty->VCpuOTPOnWakeup = NV_TRUE;
 #else
-	//20100917 cs77.ha@lge.com voltage output is restored to before status (max8952)
+	//20100917 voltage output is restored to before status (max8952)
     pPmuProperty->VCpuOTPOnWakeup = NV_FALSE;
 #endif
 
     /* Setting Power off count for 100 ms  -32KHz clock rate*/
     pPmuProperty->PowerOffCount = 0xc00;
-    //20100918 taewan.kim@lge.com system hang issue [START]
+    //20100918  system hang issue [START]
 #ifndef CONFIG_MACH_STAR
     pPmuProperty->CpuPowerOffUs = 1000;
 #else
     pPmuProperty->CpuPowerOffUs = 1500;
 #endif
-    //20100918 taewan.kim@lge.com system hang issue [END]
+    //20100918  system hang issue [END]
     return NV_TRUE;
 }
 

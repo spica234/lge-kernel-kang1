@@ -32,11 +32,11 @@
 
 #include "board.h"
 
-//20110131, byoungwoo.yoon@lge.com, Stop i2c comm during reset [START]
+//20110131, , Stop i2c comm during reset [START]
 #include "odm_kit/star/adaptations/pmu/max8907/max8907_supply_info_table.h"
 #include "nvrm_pmu.h"
 #include "nvodm_services.h"
-//20110131, byoungwoo.yoon@lge.com, Stop i2c comm during reset [END]
+//20110131, , Stop i2c comm during reset [END]
 
 #define APB_MISC_HIDREV		0x804
 #define FUSE_VISIBILITY_REG_OFFSET		0x48
@@ -220,10 +220,10 @@ static void tegra_machine_restart(char mode, const char *cmd)
 	{
 		printk("sensor pmu handle fail!\n");
 	}
-	//20110131, byoungwoo.yoon@lge.com, Stop i2c comm during reset [START]
+	//20110131, , Stop i2c comm during reset [START]
    
 	if ( cmd == NULL ) 
-		disable_nonboot_cpus();
+	disable_nonboot_cpus();
 	else if ( *cmd != 'p'  )
 		disable_nonboot_cpus();
 

@@ -826,11 +826,7 @@ static void DfsParametersInit(NvRmDfs* pDfs)
 
 #ifdef CONFIG_FAKE_SHMOO
 	// Set maximum scaling frequency to 1100mhz at boot
-#ifndef CONFIG_LOWER_CPU_FREQ
-	pDfs->HighCornerKHz.Domains[NvRmDfsClockId_Cpu] = 1100000;
-#else
 	pDfs->HighCornerKHz.Domains[NvRmDfsClockId_Cpu] = 1015000;
-#endif // CONFIG_LOWER_CPU_FREQ
 #endif // FAKE_SHMOO
 
     pDfs->CpuCornersShadow.MinKHz =
@@ -1849,11 +1845,11 @@ static void DttIntrCallback(void* args)
             NvOdmTmonConfigParam_IntrLimitHigh, &HighLimit);
         DttRangeReport(TemperatureC, pDtt);
         
-//20101121 cs77.ha@lge.com, HW power off in thermal limit [START]
+//20101121 , HW power off in thermal limit [START]
 #if defined(CONFIG_MACH_STAR)
         NvRmPrivStarDttPolicyUpdate(pDfs->hRm, TemperatureC, pDtt);
 #endif
-//20101121 cs77.ha@lge.com, HW power off in thermal limit [END]
+//20101121 , HW power off in thermal limit [END]
     }
 }
 

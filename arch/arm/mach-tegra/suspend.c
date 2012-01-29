@@ -499,11 +499,11 @@ static void tegra_suspend_dram(bool lp0_ok)
 	} else {
 		NvRmPrivPowerSetState(s_hRmGlobal, NvRmPowerState_LP0);
 
-        //20110213, cs77.ha@lge.com, sched_clock mismatch issue after deepsleep [START]
+        //20110213, , sched_clock mismatch issue after deepsleep [START]
         #if defined(CONFIG_MACH_STAR)
         tegra_lp0_sched_clock_clear();
         #endif
-        //20110213, cs77.ha@lge.com, sched_clock mismatch issue after deepsleep [END]
+        //20110213, , sched_clock mismatch issue after deepsleep [END]
 
 		mode |= TEGRA_POWER_CPU_PWRREQ_OE;
 		mode |= TEGRA_POWER_PWRREQ_OE;
