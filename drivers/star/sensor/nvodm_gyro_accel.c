@@ -142,6 +142,7 @@ void NvGyroAccelSetPowerRail(NvOdmServicesPmuHandle hPMUDevice, NvU32 Id, NvBool
 {
 	NvOdmServicesPmuVddRailCapabilities vddrailcap;
 	NvU32 settletime;
+	printk(" ## MPU3050 : 3 \n") ;
 
 	Accel_PRail = Id;
 

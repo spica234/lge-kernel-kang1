@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2009 LGE, Inc.
  *
- * Author: Changsu Ha <cs77.ha@lge.com>
+ * Author: Changsu Ha <>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
 	@brief		 star(lgp990) touch LED
  
-	@author		 cs77.ha@lge.com
+	@author		 
 	@date		 2010-06-11
  
 	@version	 V1.00		 2010.06.11		 Changsu Ha	 Create
@@ -92,21 +92,21 @@ static NvBool touchLED_Control(NvU8 value)
 	/* set the rail volatage to the recommended */
 	if(value)
 	{
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [START]
+// 20100820  LGE Touch LED Control [START]
 #ifdef TOUCH_LED_TIMER
 		hrtimer_cancel(&s_touchLED.timer);
 		hrtimer_start(&s_touchLED.timer, ktime_set(s_touchLED.delay, 0), HRTIMER_MODE_REL);
 #endif
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [END]
+// 20100820  LGE Touch LED Control [END]
         NvOdmServicesPmuSetVoltage(s_touchLED.hPmu, s_touchLED.conn->AddressList[0].Address, s_touchLED.setVal, &settle_us);
 	}
 	else
 	{
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [START]
+// 20100820  LGE Touch LED Control [START]
 #ifdef TOUCH_LED_TIMER
 		hrtimer_cancel(&s_touchLED.timer);
 #endif
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [END]
+// 20100820  LGE Touch LED Control [END]
 		if ( s_touchLED.keep_led_on != 1 )
 		NvOdmServicesPmuSetVoltage(s_touchLED.hPmu, s_touchLED.conn->AddressList[0].Address, NVODM_VOLTAGE_OFF, &settle_us);
 	}
@@ -195,7 +195,7 @@ static int touchLED_resume(struct platform_device *pdev)
 }
 #endif
 
-//20101104, cs77.ha@lge.com, WLED set [START]
+//20101104, , WLED set [START]
 static ssize_t star_wled_show(struct device *dev, 
             struct device_attribute *attr, char *buf)
 {
@@ -319,7 +319,7 @@ static struct attribute *star_wled_attributes[] = {
 static const struct attribute_group star_wled_group = {
     .attrs = star_wled_attributes,
 };
-//20101104, cs77.ha@lge.com, WLED set [END]
+//20101104, , WLED set [END]
 
 void keep_touch_led_on(void)
 {
@@ -388,7 +388,7 @@ static int __init touchLED_probe(struct platform_device *pdev)
 #endif
 
     s_touchLED.keep_led_on = 0;
-    //20101104, cs77.ha@lge.com, WLED set [START]
+    //20101104, , WLED set [START]
     if (sysfs_create_group(&pdev->dev.kobj, &star_wled_group)) {
         printk(KERN_ERR "[star touch led] sysfs_create_group ERROR\n");
     }
@@ -420,9 +420,9 @@ static int __init touchLED_probe(struct platform_device *pdev)
 
 static int touchLED_remove(struct platform_device *pdev)
 {
-    //20101104, cs77.ha@lge.com, WLED set [START]
+    //20101104, , WLED set [START]
     sysfs_remove_group(&pdev->dev.kobj, &star_wled_group);
-    //20101104, cs77.ha@lge.com, WLED set [END]
+    //20101104, , WLED set [END]
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
     unregister_early_suspend(&s_touchLED.early_suspend);
@@ -437,9 +437,9 @@ static int touchLED_remove(struct platform_device *pdev)
 
 static void touchLED_shutdown(struct  platform_device *pdev)
 {
-    //20101104, cs77.ha@lge.com, WLED set [START]
+    //20101104, , WLED set [START]
     sysfs_remove_group(&pdev->dev.kobj, &star_wled_group);
-    //20101104, cs77.ha@lge.com, WLED set [END]
+    //20101104, , WLED set [END]
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
     unregister_early_suspend(&s_touchLED.early_suspend);
@@ -466,13 +466,13 @@ static struct platform_driver touchLED_driver = {
     },
 };
 
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [START]
+// 20100820  LGE Touch LED Control [START]
 void touchLED_enable(NvBool status)
 {
 	if(s_touchLED.is_working)
 	    touchLED_Control(status);
 }
-// 20100820 joseph.jung@lge.com LGE Touch LED Control [END]
+// 20100820  LGE Touch LED Control [END]
 
 
 EXPORT_SYMBOL_GPL(touchLED_enable);
@@ -491,7 +491,7 @@ static void __exit touchLED_exit(void)
 module_init(touchLED_init);
 module_exit(touchLED_exit);
 
-MODULE_AUTHOR("cs77.ha@lge.com");
+MODULE_AUTHOR("");
 MODULE_DESCRIPTION("star touch led");
 MODULE_LICENSE("GPL");
 

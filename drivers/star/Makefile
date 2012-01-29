@@ -10,14 +10,7 @@ obj-y				+= lg_panel_gpio_set.o
 #20101119, , Camera Flash fast init
 obj-y				+= tegra_user_gpio.o
 #20101119, , Camera Flash fast init
-#obj-$(CONFIG_STAR_BATTERY_CHARGER)	+= star_battery_charger.o
-
-ifeq ($(CONFIG_USE_DS_BATTERY_DRIVER),y)
-obj-$(CONFIG_STAR_BATTERY_CHARGER) += star_battery_charger_ds.o
-else
-obj-$(CONFIG_STAR_BATTERY_CHARGER) += star_battery_charger.o
-endif
-
+obj-$(CONFIG_STAR_BATTERY_CHARGER)	+= star_battery_charger.o
 obj-$(CONFIG_STAR_MUIC_TI)	+= star_muic_TI.o
 obj-$(CONFIG_STAR_MUIC)	+= star_muic.o
 obj-$(CONFIG_STAR_PROXIMITY)	+= star_proximity.o
@@ -65,7 +58,7 @@ obj-$(CONFIG_STAR_COMPASS2)		+= sensor.module/
 #obj-$(CONFIG_STAR_COMPASS)    += nvodm_compass_ami304.o
 
 obj-$(CONFIG_STAR_ERS_TEST)	+= star_ers.o
-#20100730, kyungsik.lee@lge.com, CP Watcher
+#20100730, , CP Watcher
 ifeq ($(CONFIG_MACH_STAR_TMUS),y)
 obj-$(CONFIG_STAR_CPWATCHER) += cpwatcher_p999.o
 else
@@ -75,14 +68,14 @@ endif
 obj-$(CONFIG_STAR_HALL)	+= star_hall.o
 obj-$(CONFIG_STAR_BL) += star_bl.o
 
-#20101026, gunwoo1.kim@lge.com
+#20101026, 
 obj-$(CONFIG_LGE_ATS_INPUT_DEVICE) += star_ats.o
 obj-$(CONFIG_LGE_ATS_INPUT_DEVICE) += lge_ats_eta.o
 obj-$(CONFIG_LGE_ATS_INPUT_DEVICE) += lge_ats_event_log.o
 
-#20101105, neo.chae@lge.com
+#20101105, 
 obj-$(CONFIG_STAR_FOTA)	+= star_fota.o
 
-#dohyung10.lee@lge.com
+#
 obj-$(CONFIG_STAR_BD_ADDRESS)	+= star_bd_address.o
 obj-$(CONFIG_STAR_VIBRATOR)	+= star_vib.o

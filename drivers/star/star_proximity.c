@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010 LGE, Inc.
  *
- * Author: Taewan.kim <taewan.kim@lge.com>
+ * Author: Taewan.kim <>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,7 @@ static void star_proxi_workqueue_func(struct work_struct *work)
 	}
 }
 #else
-// LGE_CHANGE_S [dongjin73.kim@lge.com] 2011-05-22, [P999_GB] : status update
+// LGE_CHANGE_S [] 2011-05-22, [P999_GB] : status update
 static void star_proxi_workqueue_func(struct work_struct *work)
 {
 	NvU8	status;
@@ -304,7 +304,7 @@ static void star_proxi_workqueue_func(struct work_struct *work)
 		printk("proximity value(1) = %d\n", atomic_read(&proxi_status));
 	}
 }
-// LGE_CHANGE_E [dongjin73.kim@lge.com] 2011-05-22, [P999_GB] : status update
+// LGE_CHANGE_E [] 2011-05-22, [P999_GB] : status update
 #endif
 
 static void star_proxi_interrupt_handler(void *arg)
@@ -762,6 +762,6 @@ static void __exit proximity_exit(void)
 module_init(proximity_init);
 module_exit(proximity_exit);
 
-MODULE_AUTHOR("sk.hwang@lge.com");
+MODULE_AUTHOR("");
 MODULE_DESCRIPTION("star proximity driver");
 MODULE_LICENSE("GPL");

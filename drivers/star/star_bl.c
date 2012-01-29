@@ -56,7 +56,18 @@
 #include "aat2870.h"
 #include "star_bl.h"
 #include "star_gpioi2c.h"
+// 20110808 srinivas.mittapalli@lge.com GPIO Sleep status GPIO patch from P999
+#define AP_SUSPEND_STATUS
 
+#ifdef AP_SUSPEND_STATUS
+typedef struct ModemCheckRec
+{
+    NvOdmServicesGpioHandle gpioHandle;
+    NvOdmGpioPinHandle  pinHandle;
+} ModemCheck;
+
+static ModemCheck s_modemCheck;
+#endif
 
 /*
  * Debug
@@ -93,7 +104,7 @@ static int debug_enable_flag = 0x01;
  */
 #define BL_HW_RESET_DELAY 100 //us
 #define BL_INTENSITY_MAX 0x16
-#define BL_DEFAULT_LSENSOR_POLL_TIME msecs_to_jiffies(1500)
+#define BL_DEFAULT_LSENSOR_POLL_TIME msecs_to_jiffies(1000)
 #define BL_FADE_IN_DELAY 400
 #define BL_FADE_OUT_DELAY 400
 
@@ -107,10 +118,10 @@ static int debug_enable_flag = 0x01;
 #define BL_POWER_STATE_ON 0x01
 #define BL_POWER_STATE_OFF 0x00
 
-// 101103 kyungsik.lee@lge.com, Minimum Brightness level for HW Dimming
+// 101103 , Minimum Brightness level for HW Dimming
 #define LCD_LED_DIM 1
-// 101017 sk.jang@lge.com added some variables to adjust backlight brightness
-// 101103 kyungsik.lee@lge.com, Define parameters from global variables
+// 101017  added some variables to adjust backlight brightness
+// 101103 , Define parameters from global variables
 #define BRIGHTNESS_MIN 30
 #define NUMERATOR1 6
 #define NUMERATOR2 14
@@ -177,7 +188,7 @@ static struct aat2870_drvdata_t *drvdata;
 //static spinlock_t intensity_lock; //km.lee
 
 
-static NvU8 BACKLIGHT_DEFAULT = 0x0B; //101017, sk.jang@lge.com set the value to the current consumption '9.9mA'
+static NvU8 BACKLIGHT_DEFAULT = 0x0B; //101017,  set the value to the current consumption '9.9mA'
 
 
 NvBool IsReadThreadStart = NV_TRUE;
@@ -617,7 +628,7 @@ star_bl_brightness_linearized(int intensity, int *level)
     int last_intensity; 
 
 
-	//101017, sk.jang@lge.com Set the Backlight Brightness to be linearized.[START] 
+	//101017,  Set the Backlight Brightness to be linearized.[START] 
 	if (intensity < BRIGHTNESS_MIN) {
 		
 		//Too low for intensity value
@@ -638,7 +649,7 @@ star_bl_brightness_linearized(int intensity, int *level)
 		//Too High for intensity value
 		ret = -EINVAL; 
 	}
-	//101017, sk.jang@lge.com Set the Backlight Brightness to be linearized.[END]
+	//101017,  Set the Backlight Brightness to be linearized.[END]
 
 	return ret;
 }  
@@ -660,7 +671,7 @@ star_bl_store_intensity(struct device *dev, struct device_attribute *attr, const
 
 	sscanf(buf, "%d", &intensity);//level range: 0 to 22 from aat2870 ds
 
-	//101103, kyungsik.lee@lge.com, Replaced with function.
+	//101103, , Replaced with function.
 	if (star_bl_brightness_linearized(intensity, &level)) {
 
 		printk("[BL] Invalid Intensity value: %d\n", intensity);
@@ -901,20 +912,17 @@ star_bl_show_onoff(struct device *dev, struct device_attribute *attr, char *buf)
 	return r;
 }
 
+	//0418 delayed work km.lee
+	#if 0
+static struct delayed_work delayed_work_bl_on;
 
-static ssize_t
-star_bl_store_onoff(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+static void star_bl_delay_work_on( struct work_struct* work )
 {
-	int onoff;
-	static struct aat2870_drvdata_t *drv;
 	
+	static struct aat2870_drvdata_t *drv;
+	int onoff = 1;
 	
 	drv = drvdata;
-	if (!count)
-		return -EINVAL;
-
-	sscanf(buf, "%d", &onoff);
-
 	if (onoff && drv->status == BL_POWER_STATE_OFF) {
 
 		if(drv->dim_status != DIMMING_NONE)	{
@@ -949,11 +957,69 @@ star_bl_store_onoff(struct device *dev, struct device_attribute *attr, const cha
 		printk("[BL] Power Off\n");
 	} else {
 	}
-//}
+}
+#endif
+static ssize_t
+star_bl_store_onoff(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	int onoff;
+	static struct aat2870_drvdata_t *drv;
+	
+	
+	drv = drvdata;
+	if (!count)
+		return -EINVAL;
+
+	sscanf(buf, "%d", &onoff);
+
+	//0418 delayed work km.lee
+	#if 0
+if( onoff == 1 ){
+	printk("ON......\n");
+	schedule_delayed_work( &delayed_work_bl_on, 2000 );
+}
+else if( onoff == 0 ){
+	printk("OFF......\n");
+#endif
+	if (onoff && drv->status == BL_POWER_STATE_OFF) {
+        //msleep(500);
+		if(drv->dim_status != DIMMING_NONE)	{
+
+			star_bl_send_cmd(drv, aat2870bl_stop_fade_tbl);
+			drv->dim_status = DIMMING_NONE;
+			DBG("[BL] DIMMING_OFF \n");
+		}
+
+		if (drv->op_mode == AAT2870_OP_MODE_NORMAL) {
+
+			star_bl_send_cmd(drv, drv->cmds.normal);
+		} else if (drv->op_mode == AAT2870_OP_MODE_ALC) {
+
+			star_bl_send_cmd(drv, drv->cmds.alc);
+		} else {
+		}
+		drv->status = BL_POWER_STATE_ON;
+		drv->power_onoff_ref = TRUE;
+		printk("[BL] Power On\n");
+	} else if (!onoff && drv->status == BL_POWER_STATE_ON) {
+
+		if(drv->dim_status != DIMMING_NONE)	{
+
+			star_bl_send_cmd(drv, aat2870bl_stop_fade_tbl);
+			drv->dim_status = DIMMING_NONE;
+			DBG("[BL] DIMMING_OFF \n");
+		}
+		star_bl_send_cmd(drv, drv->cmds.sleep);
+		drv->status = BL_POWER_STATE_OFF;
+		drv->power_onoff_ref = FALSE;
+		printk("[BL] Power Off\n");
+	} else {
+	}
+
 	return count;
 }
 
-//20110202, cs77.ha@lge.com, force off [START]
+//20110202, , force off [START]
 static void star_aat2870_reset(void);
 
 static ssize_t
@@ -984,6 +1050,50 @@ star_bl_store_foff(struct device *dev, struct device_attribute *attr, const char
 
 	return count;
 }
+
+//20110419 km.lee@lge.com LGD panel ver. info [START]
+static ssize_t
+star_show_panel_info(struct device *dev, struct device_attribute *attr, char *buf )
+{
+	NvOdmServicesGpioHandle h_gpio;
+	NvOdmGpioPinHandle  pin;
+	NvU32 val;
+	ssize_t rval;
+
+	h_gpio = NvOdmGpioOpen();
+	if( h_gpio != NULL ){
+		pin = NvOdmGpioAcquirePinHandle(h_gpio, 'j' - 'a', 5 );
+		if( pin ){
+            NvOdmGpioConfig( h_gpio, pin, NvOdmGpioPinMode_InputData );
+            NvOdmGpioGetState( h_gpio, pin, &val );
+            if( val == 0 ){
+                NvOdmGpioReleasePinHandle( h_gpio, pin );
+                NvOdmGpioClose( h_gpio );
+				sprintf(buf, "%d\n", val);
+				rval = (ssize_t)(strlen(buf) + 1);
+            }
+            else if( val == 1 ){
+                NvOdmGpioReleasePinHandle( h_gpio, pin );
+                NvOdmGpioClose( h_gpio );
+				sprintf(buf, "%d\n", val);
+				rval = (ssize_t)(strlen(buf) + 1);
+            }
+        }
+        else{
+			rval = -1;
+            NvOdmGpioClose(h_gpio);
+		}
+	}
+
+	return rval;
+}
+
+static ssize_t
+star_store_panel_info(struct device *dev, struct device_attribute *attr, char *buf, size_t count )
+{
+	return 0;
+}
+//20110419 km.lee@lge.com LGD panel ver. info [END]
 //20110202, cs77.ha@lge.com, force off [END]
 
 static DEVICE_ATTR(intensity, 0666, star_bl_show_intensity, star_bl_store_intensity);
@@ -992,10 +1102,12 @@ static DEVICE_ATTR(alc, 0664, star_bl_show_alc, star_bl_store_alc);
 static DEVICE_ATTR(onoff, 0666, star_bl_show_onoff, star_bl_store_onoff);
 static DEVICE_ATTR(hwdim, 0666, star_bl_show_hwdim, star_bl_store_hwdim);
 static DEVICE_ATTR(lsensor_onoff, 0666, star_bl_show_lsensor_onoff, star_bl_store_lsensor_onoff);
+//20110419 km.lee@lge.com LGD panel ver. info
+static DEVICE_ATTR(panel_info, 0666, star_show_panel_info, star_store_panel_info);
 //static DEVICE_ATTR(alc_reg, 0666, alc_reg_show, alc_reg_store);
-//20110202, cs77.ha@lge.com, force off [START]
+//20110202, , force off [START]
 static DEVICE_ATTR(foff, 0666, star_bl_show_onoff, star_bl_store_foff);
-//20110202, cs77.ha@lge.com, force off [END]
+//20110202, , force off [END]
 
 
 static struct attribute *star_bl_attributes[] = {
@@ -1005,9 +1117,11 @@ static struct attribute *star_bl_attributes[] = {
 	&dev_attr_onoff.attr,
 	&dev_attr_hwdim.attr,
 	&dev_attr_lsensor_onoff.attr,
-    //20110202, cs77.ha@lge.com, force off [START]
+//20110419 km.lee@lge.com LGD panel ver. info
+	&dev_attr_panel_info,
+    //20110202, , force off [START]
 	&dev_attr_foff.attr,
-    //20110202, cs77.ha@lge.com, force off [END]
+    //20110202, , force off [END]
 	NULL,
 };
 
@@ -1058,6 +1172,9 @@ static void star_aat2870_early_suspend(struct early_suspend *es)
 {
 	static struct aat2870_drvdata_t *drv;
 	
+#ifdef AP_SUSPEND_STATUS
+    NvOdmGpioSetState(s_modemCheck.gpioHandle, s_modemCheck.pinHandle, 0);
+#endif
 	drv = drvdata;
 
 	if (drv->status == BL_POWER_STATE_ON) {
@@ -1079,6 +1196,9 @@ static void star_aat2870_late_resume(struct early_suspend *es)
 {
 	static struct aat2870_drvdata_t *drv;
 	
+#ifdef AP_SUSPEND_STATUS
+    NvOdmGpioSetState(s_modemCheck.gpioHandle, s_modemCheck.pinHandle, 1);
+#endif
 	drv = drvdata;
 
 	if (drv->status == BL_POWER_STATE_OFF) {
@@ -1108,7 +1228,9 @@ static int star_aat2870_probe(struct platform_device *pdev)
 	int retval = 0;
 	struct device *dev = &pdev->dev;
 	struct aat2870_drvdata_t *drv;
-
+#ifdef AP_SUSPEND_STATUS
+    NvU32 pin, port;
+#endif
 
 	drv = kzalloc(sizeof(struct aat2870_drvdata_t), GFP_KERNEL);
 	if (drv == NULL) {
@@ -1190,8 +1312,45 @@ static int star_aat2870_probe(struct platform_device *pdev)
 	INIT_DELAYED_WORK(&drv->delayed_work_bl, star_bl_work_func);
 	//schedule_delayed_work(&drvdata->delayed_work_bl, 100);
    
+#ifdef AP_SUSPEND_STATUS
+    //GPIO configuration
+    s_modemCheck.gpioHandle = NvOdmGpioOpen();
+    if (!s_modemCheck.gpioHandle)
+    {
+        printk(KERN_ERR "[star modem_chk] NvOdmGpioOpen Error \n");
+        goto err_open_modem_chk_gpio_fail;
+    }
+#if defined(CONFIG_MODEM_IFX)
+    port = 'r'-'a';
+    pin = 0;
+#elif defined(CONFIG_MODEM_MDM)
+#if defined(CONFIG_MACH_STAR_SKT_REV_E) 
+    port = 'r'-'a';
+    pin = 0;
+#else
+    port = 'h'-'a';
+    pin = 2;
+#endif
+#endif 
+    s_modemCheck.pinHandle = NvOdmGpioAcquirePinHandle(s_modemCheck.gpioHandle, 
+                                                    port, pin);
+    if (!s_modemCheck.pinHandle)
+    {
+        printk(KERN_ERR "[star modem_chk] NvOdmGpioAcquirePinHandle Error\n");
+        goto err_modem_chk_gpio_pin_acquire_fail;
+    }
+    NvOdmGpioSetState(s_modemCheck.gpioHandle, s_modemCheck.pinHandle, 1);
+    NvOdmGpioConfig(s_modemCheck.gpioHandle, s_modemCheck.pinHandle, 
+                    NvOdmGpioPinMode_Output);
+#endif
+   
     return 0;
 
+#ifdef AP_SUSPEND_STATUS
+err_modem_chk_gpio_pin_acquire_fail:
+    NvOdmGpioClose(s_modemCheck.gpioHandle); 
+err_open_modem_chk_gpio_fail:
+#endif
 
 err_input_device:
 

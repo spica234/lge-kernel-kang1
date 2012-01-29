@@ -12,9 +12,9 @@
 #include <linux/miscdevice.h>
 #include <linux/timer.h>
 
-//20100717 sk.hwang@lge.com For HRTIMER @linux 2.6.32[start]
+//20100717  For HRTIMER @linux 2.6.32[start]
 #include <linux/hrtimer.h>
-//20100717 sk.hwang@lge.com For HRTIMER @linux 2.6.32[end]
+//20100717  For HRTIMER @linux 2.6.32[end]
 
 #include "nvcommon.h"
 #include "nvodm_services.h"
@@ -72,7 +72,7 @@ static void star_vib_work_func(struct work_struct *work)
 }
 
 
-// 20100903 taewan.kim@lge.com Power control bug fix [START]
+// 20100903  Power control bug fix [START]
 static int star_vib_set_power_rail( NvU32 vdd_id, NvBool is_enable )
 {
     NvOdmServicesPmuHandle h_pmu = NvOdmServicesPmuOpen();
@@ -371,11 +371,11 @@ static int __init star_vib_probe(struct platform_device *pdev )
 		return err;
 	}
 
-        // 20100903 taewan.kim@lge.com Power control bug fix [START]
+        // 20100903  Power control bug fix [START]
 	/*g_vib->h_vib_pmu = NvOdmServicesPmuOpen();
 	if( !g_vib->h_vib_pmu )
 	{err=-ENOSYS; return err;}*/
-        // 20100903 taewan.kim@lge.com Power control bug fix [END]
+        // 20100903  Power control bug fix [END]
 
 	pcon = (NvOdmPeripheralConnectivity*)NvOdmPeripheralGetGuid(NV_ODM_GUID('v','i','b','r','a','t','o','r'));
 	for(loop = 0; loop< pcon->NumAddress; loop++)
@@ -496,6 +496,6 @@ static void __exit star_vib_exit(void)
 module_init(star_vib_init);
 module_exit(star_vib_exit);
 
-MODULE_AUTHOR("sk.hwang@lge.com");
+MODULE_AUTHOR("");
 MODULE_DESCRIPTION("driver of star viberator");
 MODULE_LICENSE("GPL");
