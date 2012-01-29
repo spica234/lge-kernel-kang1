@@ -4276,11 +4276,11 @@ clkwait:
 	if ((bus->dhd->busstate == DHD_BUS_DOWN) || bcmsdh_regfail(sdh)) {
 		DHD_ERROR(("%s: failed backplane access over SDIO, halting operation %d \n",
 		           __FUNCTION__, bcmsdh_regfail(sdh)));
-// 20110201 mingi.sung@lge.com Disable SDIO interrupt when BUS is down [START]
+// 20110201  Disable SDIO interrupt when BUS is down [START]
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 		bcmsdh_intr_disable(bus->sdh);
 #endif
-// 20110201 mingi.sung@lge.com Disable SDIO interrupt when BUS is down [END]
+// 20110201  Disable SDIO interrupt when BUS is down [END]
 		bus->dhd->busstate = DHD_BUS_DOWN;
 		bus->intstatus = 0;
 #if defined(CONFIG_LGE_BCM432X_PATCH)		//by sjpark 11-02-01
@@ -4344,11 +4344,11 @@ dhdsdio_isr(void *arg)
 
 	DHD_TRACE(("%s: Enter\n", __FUNCTION__));
 
-// 20110212 mingi.sung@lge.com Prevent BUS IS DOWN error [START]
+// 20110212  Prevent BUS IS DOWN error [START]
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 	dhd_mmc_suspend = FALSE;
 #endif
-// 20110212 mingi.sung@lge.com Prevent BUS IS DOWN error [END]
+// 20110212  Prevent BUS IS DOWN error [END]
 
 	if (!bus) {
 		DHD_ERROR(("%s : bus is null pointer , exit \n", __FUNCTION__));

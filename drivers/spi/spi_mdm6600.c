@@ -184,7 +184,7 @@ struct ifx_spi_data {
         unsigned int		throttle;
         struct work_struct      ifx_work;
         struct work_queue_struct *ifx_wq;
-//20100811-1, syblue.lee@lge.com, move global variables [START]
+//20100811-1, , move global variables [START]
 	unsigned int		ifx_master_initiated_transfer;
 	unsigned int		ifx_spi_count;
 	unsigned int		ifx_sender_buf_size;
@@ -237,7 +237,7 @@ struct tty_driver 	*ifx_spi_tty_driver;
 /* ################################################################################################################ */
 /* Global Declarations */
 unsigned long		minors[IFX_N_SPI_MINORS / BITS_PER_LONG];
-/*//20100811-1, syblue.lee@lge.com, move global variables [START]
+/*//20100811-1, , move global variables [START]
 unsigned int		ifx_master_initiated_transfer = 0;
 unsigned int		ifx_spi_count;
 unsigned int		ifx_sender_buf_size;
@@ -289,7 +289,7 @@ static NvOdmGpioPinHandle hPin = NULL;
 #define DISABLE_SRDY_IRQ(irq)	
 #endif
 
-//20100626-1, syblue.lee@lge.com, throughput check [START]
+//20100626-1, , throughput check [START]
 //#define SPEED_CHECK
 #ifdef SPEED_CHECK
 #include <linux/time.h>
@@ -305,12 +305,12 @@ static unsigned long uiTxlen[MAX_USED_SPI_DREVICE], uiRxlen[MAX_USED_SPI_DREVICE
 static unsigned long ulTxThroughtput[MAX_USED_SPI_DREVICE], ulRxThroughtput[MAX_USED_SPI_DREVICE];
 static bool fWrite[MAX_USED_SPI_DREVICE] = {0,0};
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 
-//20100701-1, syblue.lee@lge.com, delay time until CP can be ready again [START]
+//20100701-1, , delay time until CP can be ready again [START]
 #include <linux/delay.h>
 #define MRDY_DELAY_TIME	100
-//20100701-1, syblue.lee@lge.com, delay time until CP can be ready again [END]
+//20100701-1, , delay time until CP can be ready again [END]
 
 /* ################################################################################################################ */
 
@@ -380,7 +380,7 @@ ifx_spi_write(struct tty_struct *tty, const unsigned char *buf, int count)
 
 	int _count = (count & ~SPI_MORE_ATTR);
 
-//20100626-1, syblue.lee@lge.com, throughput check [START]
+//20100626-1, , throughput check [START]
 #ifdef SPEED_CHECK
 	int id = tty->index;
 	unsigned long diff;
@@ -389,7 +389,7 @@ ifx_spi_write(struct tty_struct *tty, const unsigned char *buf, int count)
 	//ulStart = getuSecTime();
 	do_gettimeofday(&ulStart[id]);
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 	if(spi_data==NULL)
 	{
 		SPI_LOG("no spi handle");
@@ -422,7 +422,7 @@ ifx_spi_write(struct tty_struct *tty, const unsigned char *buf, int count)
 	SPI_DEBUG_LOG("[id: %d]", tty->index);
 //LGE_TELECA_CR1317_DATA_THROUGHPUT END
 	wait_for_completion(&spi_data->ifx_read_write_completion);
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 #ifdef SPEED_CHECK
 	//ulEnd = getuSecTime() - ulStart;
 	do_gettimeofday(&ulEnd[id]);
@@ -434,7 +434,7 @@ ifx_spi_write(struct tty_struct *tty, const unsigned char *buf, int count)
 	uiTxlen[id];
 	fWrite[id] = 0;
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 	init_completion(&spi_data->ifx_read_write_completion);
 	SPI_DEBUG_LOG("%d bytes sent to the device", spi_data->ifx_ret_count);
 	return spi_data->ifx_ret_count; /* Number of bytes sent to the device */
@@ -670,7 +670,7 @@ static void ifx_spi_shutdown(struct spi_device *spi)
 
 	
 }
-//20100908 cs77.ha@lge.com deepsleep wakeup issue [START]
+//20100908  deepsleep wakeup issue [START]
 #include <mach/iomap.h>
 #include <linux/io.h>
 
@@ -840,10 +840,10 @@ static struct spi_driver ifx_spi_driver = {
 	.probe = ifx_spi_probe,
 	.remove = __devexit_p(ifx_spi_remove),
 	.shutdown = ifx_spi_shutdown, 
-//20100908 cs77.ha@lge.com deepsleep wakeup issue [START]
+//20100908  deepsleep wakeup issue [START]
 	.suspend = ifx_spi_suspend,
 	.resume = ifx_spi_resume,
-//20100908 cs77.ha@lge.com deepsleep wakeup issue [END]
+//20100908  deepsleep wakeup issue [END]
 };
 
 /*
@@ -963,7 +963,7 @@ ifx_spi_get_header_info(struct ifx_spi_data *spi_data, unsigned int *valid_buf_s
 	}
 
 	if(header.ifx_spi_header.curr_data_size<=IFX_SPI_DEFAULT_BUF_SIZE)	
-	{	//20100709-1, syblue.lee@lge.com, check rx size
+	{	//20100709-1, , check rx size
 		*valid_buf_size = header.ifx_spi_header.curr_data_size;
 	}
 	else
@@ -977,7 +977,7 @@ ifx_spi_get_header_info(struct ifx_spi_data *spi_data, unsigned int *valid_buf_s
 		spi_data->more_rx = 1;
 //LGE_TELECA_CR1317_DATA_THROUGHPUT END
 //LGE_TELECA_CR:1056_SPI/MUX_IMPROVEMENT END
-		if(header.ifx_spi_header.next_data_size<=IFX_SPI_DEFAULT_BUF_SIZE)		//20100709-1, syblue.lee@lge.com, check next rx size
+		if(header.ifx_spi_header.next_data_size<=IFX_SPI_DEFAULT_BUF_SIZE)		//20100709-1, , check next rx size
 			return header.ifx_spi_header.next_data_size;
 	}
 //LGE_TELECA_CR:1056_SPI/MUX_IMPROVEMENT START
@@ -1116,13 +1116,13 @@ ifx_spi_send_and_receive_data(struct ifx_spi_data *spi_data)
 #endif
 //LGE_TELECA_CR1317_DATA_THROUGHPUT END
 
-	if((spi_data->throttle == 0) && (rx_valid_buf_size != 0) && (spi_data->ifx_tty!=NULL))	//20100711-3, syblue.lee@lge.com, check ifx_tty
+	if((spi_data->throttle == 0) && (rx_valid_buf_size != 0) && (spi_data->ifx_tty!=NULL))	//20100711-3, , check ifx_tty
 	{
-//20100626-1, syblue.lee@lge.com, throughput check [START]
+//20100626-1, , throughput check [START]
 #ifdef SPEED_CHECK
 		uiRxlen[spi_data->ifx_tty->index] = rx_valid_buf_size+IFX_SPI_HEADER_SIZE;
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 		tty_insert_flip_string(spi_data->ifx_tty, spi_data->ifx_rx_buffer+IFX_SPI_HEADER_SIZE, rx_valid_buf_size);
 		tty_flip_buffer_push(spi_data->ifx_tty);
 	}  
@@ -1346,7 +1346,7 @@ ifx_spi_handle_work(struct work_struct *work)
 		SPI_LOG("SPI%d : RX time = %09d usec; %04d bytes; %06lu Kbps", id, diff, 
 			IFX_SPI_MAX_BUF_SIZE+IFX_SPI_HEADER_SIZE, ((IFX_SPI_MAX_BUF_SIZE+IFX_SPI_HEADER_SIZE)*8000)/diff);
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 		//SPI_DEBUG_LOG("[id: %d]", id);
 		/* Once data transmission is completed, the MRDY signal is lowered */
 		if((spi_data->ifx_sender_buf_size == 0)  && (spi_data->ifx_receiver_buf_size == 0)){
@@ -1373,9 +1373,9 @@ ifx_spi_handle_work(struct work_struct *work)
 		if(spi_data->ifx_sender_buf_size == 0){
 			if(spi_data->ifx_receiver_buf_size == 0){		
 				ifx_spi_set_srdy_signal(0);
-//20100701-1, syblue.lee@lge.com, delay time until CP can be ready again [START]
+//20100701-1, , delay time until CP can be ready again [START]
 //				udelay(MRDY_DELAY_TIME);
-//20100701-1, syblue.lee@lge.com, delay time until CP can be ready again [END]
+//20100701-1, , delay time until CP can be ready again [END]
 				ifx_spi_buffer_initialization(spi_data);
 				//SPI_DEBUG_LOG("[id: %d]", id);
 			}
@@ -1384,7 +1384,7 @@ ifx_spi_handle_work(struct work_struct *work)
 		}
 	}
 
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 #if	0	//def SPEED_CHECK
 	if(uiTxlen[spi_data->ifx_tty->index] || uiRxlen[spi_data->ifx_tty->index]) {
 		//ulEnd = getuSecTime() - ulStart;
@@ -1401,7 +1401,7 @@ ifx_spi_handle_work(struct work_struct *work)
 		fWrite[spi_data->ifx_tty->index] = 0;
 	}
 #endif
-//20100626-1, syblue.lee@lge.com, throughput check [END]
+//20100626-1, , throughput check [END]
 
 //LGE_TELECA_CR:1056_SPI/MUX_IMPROVEMENT START
 #ifdef SPI_SEND_MORE_ATTR
@@ -1443,7 +1443,7 @@ __init ifx_spi_init(void)
 
 	/* initialize the tty driver */
 	ifx_spi_tty_driver->owner = THIS_MODULE;
-	ifx_spi_tty_driver->driver_name = "tty_ifxn721";	//20100607-1, syblue.lee@lge.com, modify ifxn721 -> tty_ifxn721
+	ifx_spi_tty_driver->driver_name = "tty_ifxn721";	//20100607-1, , modify ifxn721 -> tty_ifxn721
 	ifx_spi_tty_driver->name = "ttyspi";
 	ifx_spi_tty_driver->major = IFX_SPI_MAJOR;
 	ifx_spi_tty_driver->minor_start = 0;
@@ -1498,6 +1498,6 @@ module_exit(ifx_spi_exit);
 
 /* ################################################################################################################ */
 
-MODULE_AUTHOR("Sangyun Lee <syblue.lee@lge.com>");
+MODULE_AUTHOR("Sangyun Lee <>");
 MODULE_DESCRIPTION("MDM6600 SPI Framing Layer");
 MODULE_LICENSE("GPL");

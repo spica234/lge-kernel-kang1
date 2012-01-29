@@ -305,12 +305,16 @@ typedef struct bt_info {
 
 bt_info_t *g_bt = NULL;
 static void wl_iw_bt_timerfunc(ulong data);
+
+
 iscan_info_t *g_iscan = NULL;
 static void wl_iw_timerfunc(ulong data);
 static void wl_iw_set_event_mask(struct net_device *dev);
 static int
 wl_iw_iscan(iscan_info_t *iscan, wlc_ssid_t *ssid, uint16 action);
 #endif 
+
+
 static int
 wl_iw_set_scan(
 	struct net_device *dev,
@@ -601,11 +605,11 @@ wl_iw_set_active_scan(
 #endif 
 		error = dev_wlc_ioctl(dev, WLC_SET_PASSIVE_SCAN, &as, sizeof(as));
 #if defined(WL_IW_USE_ISCAN)
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-04-15, fixed passive/active scan */
+/* LGE_CHANGE_S [] 2009-04-15, fixed passive/active scan */
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	else
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-04-15, fixed passive/active scan */
+/* LGE_CHANGE_E [] 2009-04-15, fixed passive/active scan */
 		g_iscan->scan_flag = as;
 #endif 
 	p += snprintf(p, MAX_WX_STRING, "OK");
@@ -636,11 +640,11 @@ wl_iw_set_passive_scan(
 		}
 #if defined(WL_IW_USE_ISCAN)
 	}
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-04-15, fixed passive/active scan */
+/* LGE_CHANGE_S [] 2009-04-15, fixed passive/active scan */
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	else
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-04-15, fixed passive/active scan */
+/* LGE_CHANGE_E [] 2009-04-15, fixed passive/active scan */
 		g_iscan->scan_flag = ps;
 #endif 
 
@@ -679,9 +683,9 @@ wl_iw_get_macaddr(
 
 //by sjpark 10-12-15	[
 uint wl_dtim_val = 0;		//by sjpark 100824
-// 20110210 mingi.sung@lge.com DLNA settings [START]
+// 20110210  DLNA settings [START]
 uint dnla_dtim_val = 0;
-// 20110210 mingi.sung@lge.com DLNA settings [END]
+// 20110210  DLNA settings [END]
 int wl_iw_set_dtim_val(struct net_device *dev)	//hyeok	: 100824
 {
 	int ret, cal_dtim;
@@ -696,10 +700,10 @@ int wl_iw_set_dtim_val(struct net_device *dev)	//hyeok	: 100824
 			return ret;
 
 		bi = (wl_bss_info_t*)(buf + 4);
-// 20110210 mingi.sung@lge.com DLNA settings [START]
+// 20110210  DLNA settings [START]
 //		if (dtoh32(bi->version) == WL_BSS_INFO_VERSION )
 		if (dtoh32(bi->version) == WL_BSS_INFO_VERSION && (!dnla_dtim_val) )
-// 20110210 mingi.sung@lge.com DLNA settings [END]
+// 20110210  DLNA settings [END]
 		{
 			printk("[%s] beacon_period[%d], dtim_period[%d]\n",__FUNCTION__,bi->beacon_period,bi->dtim_period);
 			cal_dtim = (bi->beacon_period) * (bi->dtim_period);
@@ -1133,8 +1137,8 @@ wl_iw_set_btcoex_dhcp(
 			
 				WL_TRACE_COEX(("%s bt->bt_state:%d\n",
 					__FUNCTION__, g_bt->bt_state));
+				
 				up(&g_bt->bt_sem);
-//				up(&g_bt->bt_sem);
 			}
 		}
 
@@ -1249,13 +1253,13 @@ wl_iw_get_link_speed(
 		link_speed *= 500000;
 	}
 
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-04-07, showing the 5.5 Mbps */
+/* LGE_CHANGE_S [] 2009-04-07, showing the 5.5 Mbps */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 	if (link_speed == 5500000)
 		p += snprintf(p, MAX_WX_STRING, "LinkSpeed 5.5");
 	else
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-04-07, showing the 5.5 Mbps */
+/* LGE_CHANGE_E [] 2009-04-07, showing the 5.5 Mbps */
 	p += snprintf(p, MAX_WX_STRING, "LinkSpeed %d", link_speed/1000000);
 
 	wrqu->data.length = p - extra + 1;
@@ -1579,10 +1583,6 @@ exit_proc:
 	return res;
 }
 #endif 
-/* BEGIN: 0005568 mingi.sung@lge.com 2010-03-27 */
-/* MOD 0005568: [WLAN] Wi-Fi will be disconnected if the RSSI value is lower than -92 */
-/* int less_than_rssi = 0; */
-/* END: 0005568 mingi.sung@lge.com 2010-03-27 */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 int wl_dtim_set = 0;
 #endif
@@ -1600,13 +1600,13 @@ wl_iw_get_rssi(
 #endif
 	int error = 0;
 	char *p = extra;
-/* LGE_CHANGE_S, [yoohoo@lge.com], 2009-05-13,
+/* LGE_CHANGE_S, [], 2009-05-13,
  * <some ssid use '<' character sometimes and it cause response discard
  * in wpa_supplicant (wpa_ctrl_request())> */
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	static char ssidbuf[SSID_FMT_BUF_LEN];
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E, [yoohoo@lge.com], 2009-05-13,
+/* LGE_CHANGE_E, [], 2009-05-13,
  * <some ssid use '<' character sometimes and it cause response discard
  * in wpa_supplicant (wpa_ctrl_request())> */
 	scb_val_t scb_val;
@@ -1624,7 +1624,7 @@ wl_iw_get_rssi(
 #endif
 	}
 
-/* LGE_CHANGE_S, [yoohoo@lge.com], 2009-05-13,
+/* LGE_CHANGE_S, [], 2009-05-13,
  * <some ssid use '<' character sometimes and it cause response discard
  * in wpa_supplicant (wpa_ctrl_request())> */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
@@ -1638,7 +1638,7 @@ wl_iw_get_rssi(
 	wl_format_ssid(ssidbuf, ssid.SSID, dtoh32(ssid.SSID_len));
 	p += snprintf(p, MAX_WX_STRING, "%s rssi %d ", ssidbuf, rssi);
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E, [yoohoo@lge.com], 2009-05-13,
+/* LGE_CHANGE_E, [], 2009-05-13,
  * <some ssid use '<' character sometimes and it cause response discard
  * in wpa_supplicant (wpa_ctrl_request())> */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
@@ -1675,11 +1675,11 @@ wl_iw_send_priv_event(
 	return 0;
 }
 
-/* LGE_CHANGE_S, [yoohoo@lge.com], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
+/* LGE_CHANGE_S, [], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
 #if defined(CONFIG_LGE_BCM432X_PATCH) && defined(CONFIG_BRCM_USE_DEEPSLEEP)
 extern int dhd_deep_sleep(struct net_device *dev, int flag);
 #endif /* CONFIG_LGE_BCM432X_PATCH && CONFIG_BRCM_USE_DEEPSLEEP */
-/* LGE_CHANGE_E, [yoohoo@lge.com], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
+/* LGE_CHANGE_E, [], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
 
 int
 wl_control_wl_start(struct net_device *dev)
@@ -1703,7 +1703,7 @@ wl_control_wl_start(struct net_device *dev)
 	dhd_os_start_lock(iw->pub);
 
 	if (g_onoff == G_WLAN_SET_OFF) {
-/* LGE_CHANGE_S, [yoohoo@lge.com], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
+/* LGE_CHANGE_S, [], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
 #if defined(CONFIG_LGE_BCM432X_PATCH) && defined(CONFIG_BRCM_USE_DEEPSLEEP)
 		/* Use Deep Sleep instead of WL RESET */
 		dhd_deep_sleep(dev, FALSE);
@@ -1729,7 +1729,7 @@ wl_control_wl_start(struct net_device *dev)
 		 printk("Exited %s \n", __FUNCTION__);
 #endif	/* defined(CONFIG_BRCM_USE_GPIO_RESET) */ /* Do not use GPIO Reset at On/Off. Use mpc. */
 #endif /* CONFIG_LGE_BCM432X_PATCH && CONFIG_BRCM_USE_DEEPSLEEP */
-/* LGE_CHANGE_E, [yoohoo@lge.com], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
+/* LGE_CHANGE_E, [], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
 		g_onoff = G_WLAN_SET_ON;
 	}
 	WL_ERROR(("Exited %s \n", __FUNCTION__));
@@ -1780,7 +1780,7 @@ wl_iw_control_wl_off(
 		g_iscan->iscan_state = ISCAN_STATE_IDLE;
 #endif 
 
-/* LGE_CHANGE_S, [yoohoo@lge.com], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
+/* LGE_CHANGE_S, [], 2009-11-19, Use deepsleep instead of dhd_dev_reset when driver start or stop */
 #if defined(CONFIG_BRCM_USE_DEEPSLEEP)
 		/* Use Deep Sleep instead of WL Reset*/
 		dhd_deep_sleep(dev, TRUE);
@@ -1847,12 +1847,12 @@ wl_iw_control_wl_on(
 		}
 	}
 
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */
+/* LGE_CHANGE_S [] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	/* Modify not sending wl_iw_send_priv_event in wl_iw_control_wl_on() */
 	wl_iw_send_priv_event(dev, "START");
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */
+/* LGE_CHANGE_E [] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */
 
 #ifdef SOFTAP
 	if (!ap_fw_loaded) {
@@ -2312,7 +2312,7 @@ static int iwpriv_get_assoc_list(struct net_device *dev,
 	p_mac_str_end = &mac_lst[sizeof(mac_lst)-1];
 
 	for (i = 0; i < 8; i++) { 
-		struct ether_addr * id = &(*(struct ether_addr **)&sta_maclist->ea)[i];
+		struct ether_addr * id = &sta_maclist->ea[i];
 		if (!ETHER_ISNULLADDR(id->octet)) {
 			scb_val_t scb_val;
 			int rssi = 0;
@@ -3467,6 +3467,8 @@ static void wl_iw_send_scan_complete(iscan_info_t *iscan)
 		WL_TRACE(("Send Event ISCAN complete\n"));
 #endif 
 }
+
+
 static int
 _iscan_sysioc_thread(void *data)
 {
@@ -3727,10 +3729,10 @@ wl_iw_add_bss_to_ss_cache(wl_scan_results_t *ss_list)
 			continue;
 		}
 
-		// 20101006	byoungwook.baek@lge.com, bug-fix: vmalloc [START]
+		// 20101006	, bug-fix: vmalloc [START]
 		leaf = kmalloc(bi->length + WLC_IW_SS_CACHE_CTRL_FIELD_MAXLEN, GFP_KERNEL);
 		//leaf =(wl_iw_ss_cache_t *) kmalloc(sizeof(wl_iw_ss_cache_t), GFP_KERNEL);
-		// 20101006	byoungwook.baek@lge.com, bug-fix: vmalloc [END]
+		// 20101006	, bug-fix: vmalloc [END]
 		if (!leaf) {
 			MUTEX_UNLOCK_WL_SCAN_SET();
 			WL_ERROR(("Memory alloc failure %d\n", \
@@ -4396,7 +4398,7 @@ wl_iw_get_scan(
 	if ((error = dev_wlc_ioctl(dev, WLC_SCAN_RESULTS, list, len))) {
 		WL_ERROR(("%s: %s : Scan_results ERROR %d\n", dev->name, __FUNCTION__, error));
 		dwrq->length = len;
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-08-16, fix the getting ISCAN/SCAN results */
+/* LGE_CHANGE_S [] 2009-08-16, fix the getting ISCAN/SCAN results */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 		if (g_scan_specified_ssid) {
 			list->count = 0;
@@ -4410,9 +4412,9 @@ wl_iw_get_scan(
 		}
 		return 0;
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-08-16, fix the getting ISCAN/SCAN results */
+/* LGE_CHANGE_E [] 2009-08-16, fix the getting ISCAN/SCAN results */
 	}
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-08-16, fix the getting ISCAN/SCAN results */
+/* LGE_CHANGE_S [] 2009-08-16, fix the getting ISCAN/SCAN results */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 	else {
 #endif /* CONFIG_LGE_BCM432X_PATCH */		
@@ -6982,7 +6984,7 @@ static int set_ap_cfg(struct net_device *dev, struct ap_profile *ap)
 
 	if (ap_cfg_running == FALSE) {
 		 init_completion(&ap_cfg_exited);
-		
+		 
 		ap_cfg_pid = kernel_thread(thr_wait_for_2nd_eth_dev, dev, 0);
 	} else {
 		ap_cfg_pid = -1;
@@ -7718,7 +7720,7 @@ int wl_iw_process_private_ascii_cmd(
 }
 #endif 
 
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-05-14, support private command */
+/* LGE_CHANGE_S [] 2009-05-14, support private command */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 static int
 wl_iw_set_powermode(
@@ -7890,7 +7892,7 @@ static int wl_iw_voip_stop(struct net_device *dev)
 }
 #endif	/* Set VOIP */
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-05-14, support private command */
+/* LGE_CHANGE_E [] 2009-05-14, support private command */
 
 static int wl_iw_set_priv(
 	struct net_device *dev,
@@ -7902,7 +7904,7 @@ static int wl_iw_set_priv(
 	int ret = 0;
 	char * extra;
 #if defined(CONFIG_LGE_BCM432X_PATCH)
-/* LGE_CHANGE_S, [dongp.kim@lge.com] 2010-04-02 */
+/* LGE_CHANGE_S, [] 2010-04-02 */
 /* [WLAN] Fixing wl_iw_set_priv function */
 	wl_iw_t *iw;
 
@@ -7911,7 +7913,7 @@ static int wl_iw_set_priv(
 		return -EFAULT;
 	}
 	iw = *(wl_iw_t **)netdev_priv(dev);
-/* LGE_CHANGE_E, [dongp.kim@lge.com] 2010-04-02 */
+/* LGE_CHANGE_E, [] 2010-04-02 */
 #else
 	wl_iw_t *iw = *(wl_iw_t **)netdev_priv(dev);
 #endif	/* defined(CONFIG_LGE_BCM432X_PATCH) */
@@ -7932,7 +7934,7 @@ static int wl_iw_set_priv(
 		WAKE_LOCK_INIT(iw->pub, WAKE_LOCK_PRIV, "wl_iw_set_priv");
 		WAKE_LOCK(iw->pub, WAKE_LOCK_PRIV);
 
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-07-09, send wl_iw_send_priv_event  */
+/* LGE_CHANGE_S [] 2009-07-09, send wl_iw_send_priv_event  */
 /* only if receiving regular START command */
 #if defined(CONFIG_LGE_BCM432X_PATCH)
 	if (g_onoff == G_WLAN_SET_OFF) {
@@ -7974,7 +7976,7 @@ static int wl_iw_set_priv(
 			}
 		}
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */		
+/* LGE_CHANGE_E [] 2009-07-09, send wl_iw_send_priv_event only if receiving regular START command */		
 
 	    if (strnicmp(extra, "SCAN-ACTIVE", strlen("SCAN-ACTIVE")) == 0) {
 #ifdef ENABLE_ACTIVE_PASSIVE_SCAN_SUPPRESS
@@ -8034,7 +8036,7 @@ static int wl_iw_set_priv(
 			ret = wl_iw_set_btcoex_dhcp(dev, info, (union iwreq_data *)dwrq, extra);
 	    }
 #else
-/* LGE_CHANGE_S [yoohoo@lge.com] 2009-05-14, support private command */
+/* LGE_CHANGE_S [] 2009-05-14, support private command */
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	    else if (strnicmp(extra, "POWERMODE", strlen("POWERMODE")) == 0)
 			ret = wl_iw_set_btcoex_dhcp(dev, info, (union iwreq_data *)dwrq, extra);
@@ -8087,7 +8089,7 @@ static int wl_iw_set_priv(
 		    wl_iw_voip_start(dev);
 	    }else if (strnicmp(extra, "VOIP-STOP", 9) == 0) {
 		    wl_iw_voip_stop(dev);
-// 20110210 mingi.sung@lge.com DLNA settings [START]
+// 20110210  DLNA settings [START]
 	    } else if (strnicmp(extra, "DLNA-START", 10) == 0) {
 		    dnla_dtim_val = wl_dtim_val;
     		/* Not connected BSS. */	
@@ -8098,10 +8100,10 @@ static int wl_iw_set_priv(
     		wl_dtim_val = dnla_dtim_val;
     		dnla_dtim_val = 0;
 	    }
-// 20110210 mingi.sung@lge.com DLNA settings [END]
+// 20110210  DLNA settings [END]
 #endif	/* Set VOIP */
 #endif /* CONFIG_LGE_BCM432X_PATCH */
-/* LGE_CHANGE_E [yoohoo@lge.com] 2009-05-14, support private command */
+/* LGE_CHANGE_E [] 2009-05-14, support private command */
 #endif 
 #ifdef SOFTAP
 #ifdef SOFTAP_TLV_CFG
