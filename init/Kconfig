@@ -557,6 +557,16 @@ menuconfig CGROUPS
 
 if CGROUPS
 
+config CFS_BOOST
+	bool "Boost CFS"
+	depends on CGROUPS
+	default n
+
+config CFS_NICE
+	int "CFS Nice Value"
+	depends on CGROUPS
+	default -17
+
 config CGROUP_DEBUG
 	bool "Example debug cgroup subsystem"
 	depends on CGROUPS
