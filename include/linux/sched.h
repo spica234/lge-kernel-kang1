@@ -123,7 +123,7 @@ extern void get_avenrun(unsigned long *loads, unsigned long offset, int shift);
 
 #define FSHIFT		11		/* nr of bits of precision */
 #define FIXED_1		(1<<FSHIFT)	/* 1.0 as fixed-point */
-#define LOAD_FREQ	(4*HZ+61)	/* 4.61 sec intervals */
+#define LOAD_FREQ	(5*HZ+1)	/* 5 sec intervals */
 #define EXP_1		1884		/* 1/exp(5sec/1min) as fixed-point */
 #define EXP_5		2014		/* 1/exp(5sec/5min) */
 #define EXP_15		2037		/* 1/exp(5sec/15min) */
@@ -552,7 +552,6 @@ struct thread_group_cputimer {
 	spinlock_t lock;
 };
 
-
 struct autogroup;
 
 /*
@@ -621,8 +620,8 @@ struct signal_struct {
 
 	struct tty_struct *tty; /* NULL if no tty */
 
-#ifdef CONFIG_SCHED_AUTOGROUP	
- 	struct autogroup *autogroup;
+#ifdef CONFIG_SCHED_AUTOGROUP
+	struct autogroup *autogroup;
 #endif
 	/*
 	 * Cumulative resource counters for dead threads in the group,
@@ -1926,8 +1925,6 @@ extern void wake_up_idle_cpu(int cpu);
 static inline void wake_up_idle_cpu(int cpu) { }
 #endif
 
-extern void force_cpu_resched(int cpu);
-
 extern unsigned int sysctl_sched_latency;
 extern unsigned int sysctl_sched_min_granularity;
 extern unsigned int sysctl_sched_wakeup_granularity;
@@ -1975,12 +1972,12 @@ extern void sched_autogroup_exit(struct signal_struct *sig);
 #ifdef CONFIG_PROC_FS
 extern void proc_sched_autogroup_show_task(struct task_struct *p, struct seq_file *m);
 extern int proc_sched_autogroup_set_nice(struct task_struct *p, int *nice);
-#endif	
+#endif
 #else
 static inline void sched_autogroup_create_attach(struct task_struct *p) { }
 static inline void sched_autogroup_detach(struct task_struct *p) { }
 static inline void sched_autogroup_fork(struct signal_struct *sig) { }
-static inline void sched_autogroup_exit(struct signal_struct *sig) { }	
+static inline void sched_autogroup_exit(struct signal_struct *sig) { }
 #endif
 
 #ifdef CONFIG_RT_MUTEXES
@@ -1996,10 +1993,6 @@ static inline int rt_mutex_getprio(struct task_struct *p)
 #endif
 
 extern void set_user_nice(struct task_struct *p, long nice);
-#ifdef CFS_BOOST
-extern void sched_privileged_task(struct task_struct *p);
-extern int sysctl_sched_privileged_nice_level;
-#endif
 extern int task_prio(const struct task_struct *p);
 extern int task_nice(const struct task_struct *p);
 extern int can_nice(const struct task_struct *p, const int nice);
