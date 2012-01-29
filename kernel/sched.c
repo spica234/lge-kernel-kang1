@@ -54,7 +54,6 @@
 #include <linux/rcupdate.h>
 #include <linux/cpu.h>
 #include <linux/cpuset.h>
-#include <linux/cpufreq.h>
 #include <linux/percpu.h>
 #include <linux/kthread.h>
 #include <linux/proc_fs.h>
@@ -268,6 +267,10 @@ struct task_group {
 	struct task_group *parent;
 	struct list_head siblings;
 	struct list_head children;
+
+#ifdef CONFIG_SCHED_AUTOGROUP
+	struct autogroup *autogroup;
+#endif
 };
 
 #define root_task_group init_task_group
@@ -310,23 +313,15 @@ struct task_group init_task_group;
 /* return group to which a task belongs */
 static inline struct task_group *task_group(struct task_struct *p)
 {
+	struct task_group *tg;
 
 #ifdef CONFIG_CGROUP_SCHED
-	struct task_group *tg;
-	struct cgroup_subsys_state *css;
-
-	css = task_subsys_state(p, cpu_cgroup_subsys_id);
-
-	tg = container_of(css, struct task_group, css);
-
-	return autogroup_task_group(p, tg);
+	tg = container_of(task_subsys_state(p, cpu_cgroup_subsys_id),
+				struct task_group, css);
 #else
-	struct task_group *tg;
-
 	tg = &init_task_group;
-
-	return tg;
 #endif
+	return autogroup_task_group(p, tg);
 }
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
@@ -1209,16 +1204,6 @@ static void resched_cpu(int cpu)
 	spin_unlock_irqrestore(&rq->lock, flags);
 }
 
-void force_cpu_resched(int cpu)
-{
-       struct rq *rq = cpu_rq(cpu);
-       unsigned long flags;
-
-       spin_lock_irqsave(&rq->lock, flags);
-       resched_task(cpu_curr(cpu));
-       spin_unlock_irqrestore(&rq->lock, flags);
-}
-
 #ifdef CONFIG_NO_HZ
 /*
  * When add_timer_on() enqueues a timer into the timer wheel of an
@@ -1302,11 +1287,6 @@ static void sched_rt_avg_update(struct rq *rq, u64 rt_delta)
 
 static void sched_avg_update(struct rq *rq)
 {
-}
-
-void force_cpu_resched(int cpu)
-{
-       set_need_resched();
 }
 #endif /* CONFIG_SMP */
 
@@ -2782,24 +2762,6 @@ void sched_fork(struct task_struct *p, int clone_flags)
 
 	put_cpu();
 }
-
-#ifdef CONFIG_PREEMPT_COUNT_CPU
-
-/*
- * Fetch the preempt count of some cpu's current task.  Must be called
- * with interrupts blocked.  Stale return value.
- *
- * No locking needed as this always wins the race with context-switch-out
- * + task destruction, since that is so heavyweight.  The smp_rmb() is
- * to protect the pointers in that race, not the data being pointed to
- * (which, being guaranteed stale, can stand a bit of fuzziness).
- */
-int preempt_count_cpu(int cpu)
-{
-       smp_rmb(); /* stop data prefetch until program ctr gets here */
-       return task_thread_info(cpu_curr(cpu))->preempt_count;
-}
-#endif
 
 /*
  * wake_up_new_task - wake up a newly created task for the first time.
@@ -5440,7 +5402,6 @@ void account_steal_ticks(unsigned long ticks)
  */
 void account_idle_ticks(unsigned long ticks)
 {
-	cpufreq_exit_idle(smp_processor_id(), ticks);
 	account_idle_time(jiffies_to_cputime(ticks));
 }
 
@@ -5601,7 +5562,7 @@ void __kprobes add_preempt_count(int val)
 	if (DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
 		return;
 #endif
-	__add_preempt_count(val);
+	preempt_count() += val;
 #ifdef CONFIG_DEBUG_PREEMPT
 	/*
 	 * Spinlock count overflowing soon?
@@ -5632,7 +5593,7 @@ void __kprobes sub_preempt_count(int val)
 
 	if (preempt_count() == val)
 		trace_preempt_on(CALLER_ADDR0, get_parent_ip(CALLER_ADDR1));
-	__sub_preempt_count(val);
+	preempt_count() -= val;
 }
 EXPORT_SYMBOL(sub_preempt_count);
 
@@ -5791,9 +5752,6 @@ need_resched_nonpreemptible:
 
 		rq->nr_switches++;
 		rq->curr = next;
-#ifdef CONFIG_PREEMPT_COUNT_CPU
-               smp_wmb();
-#endif
 		++*switch_count;
 
 		context_switch(rq, prev, next); /* unlocks the rq */
@@ -6399,47 +6357,6 @@ out_unlock:
 	task_rq_unlock(rq, &flags);
 }
 EXPORT_SYMBOL(set_user_nice);
-
-#ifdef CFS_BOOST
-/*
- * Nice level for privileged tasks. (can be set to 0 for this
- * to be turned off)
- */
-int sysctl_sched_privileged_nice_level __read_mostly = CFS_BOOST_NICE;
-
-static int __init privileged_nice_level_setup(char *str)
-{
-	sysctl_sched_privileged_nice_level = simple_strtol(str, NULL, 0);
-	return 1;
-}
-__setup("privileged_nice_level=", privileged_nice_level_setup);
-
-/*
- * Tasks with special privileges call this and gain extra nice
- * levels:
- */
-void sched_privileged_task(struct task_struct *p)
-{
-	long new_nice = sysctl_sched_privileged_nice_level;
-	long old_nice = TASK_NICE(p);
-
-	if (new_nice >= old_nice)
-		return;
-	/*
-	 * Setting the sysctl to 0 turns off the boosting:
-	 */
-	if (unlikely(!new_nice))
-		return;
-
-	if (new_nice < -20)
-		new_nice = -20;
-	else if (new_nice > 19)
-		new_nice = 19;
-
-	set_user_nice(p, new_nice);
-}
-EXPORT_SYMBOL(sched_privileged_task);
-#endif
 
 /*
  * can_nice - check if a task can reduce its nice value
@@ -9809,7 +9726,6 @@ void __init sched_init(void)
 #ifdef CONFIG_CGROUP_SCHED
 	list_add(&init_task_group.list, &task_groups);
 	INIT_LIST_HEAD(&init_task_group.children);
-
 	autogroup_init(&init_task);
 #endif /* CONFIG_CGROUP_SCHED */
 
@@ -10077,9 +9993,6 @@ struct task_struct *curr_task(int cpu)
  * set_curr_task - set the current task for a given cpu.
  * @cpu: the processor in question.
  * @p: the task pointer to set.
-#ifdef CONFIG_PREEMPT_COUNT_CPU
-       smp_wmb();
-#endif
  *
  * Description: This function must only be used when non-maskable interrupts
  * are serviced on a separate stack. It allows the architecture to switch the
@@ -10276,6 +10189,7 @@ static void free_sched_group(struct task_group *tg)
 {
 	free_fair_sched_group(tg);
 	free_rt_sched_group(tg);
+	autogroup_free(tg);
 	kfree(tg);
 }
 
@@ -10348,9 +10262,13 @@ void sched_destroy_group(struct task_group *tg)
  *	by now. This function just updates tsk->se.cfs_rq and tsk->se.parent to
  *	reflect its new group.
  */
-void __sched_move_task(struct task_struct *tsk, struct rq *rq)
+void sched_move_task(struct task_struct *tsk)
 {
 	int on_rq, running;
+	unsigned long flags;
+	struct rq *rq;
+
+	rq = task_rq_lock(tsk, &flags);
 
 	update_rq_clock(rq);
 
@@ -10373,15 +10291,6 @@ void __sched_move_task(struct task_struct *tsk, struct rq *rq)
 		tsk->sched_class->set_curr_task(rq);
 	if (on_rq)
 		enqueue_task(rq, tsk, 0, false);
-}
-
-void sched_move_task(struct task_struct *tsk)
-{
-	struct rq *rq;
-	unsigned long flags;
-
-	rq = task_rq_lock(tsk, &flags);
-	__sched_move_task(tsk, rq);
 
 	task_rq_unlock(rq, &flags);
 }
