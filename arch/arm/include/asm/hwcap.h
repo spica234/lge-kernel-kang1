@@ -20,15 +20,13 @@
 #define HWCAP_VFPv3	8192
 #define HWCAP_VFPv3D16	16384
 
-#if defined(__KERNEL__)
-#if !defined(__ASSEMBLY__)
+#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
 /*
  * This yields a mask that user programs can use to figure out what
  * instruction set this cpu supports.
  */
 #define ELF_HWCAP	(elf_hwcap)
 extern unsigned int elf_hwcap;
-#endif
 #endif
 
 #endif
