@@ -206,6 +206,7 @@ void NvCompassSetPowerRail(NvOdmServicesPmuHandle hPMUDevice, NvU32 Id, NvBool I
 		if (settletime)
 			NvOdmOsWaitUS(settletime);  // wait to settle power
 	}
+	NvOdmServicesPmuClose(hPMUDevice);
 }
 
 

@@ -499,7 +499,7 @@ static void star_accel_whoami( void )
 	#endif
 }
 
-// 20100702 taewan.kim@lge.com Power control bug fix [START]
+// 20100702  Power control bug fix [START]
 static void star_accel_set_power_rail(NvU32 vdd_id, NvBool is_enable )
 {
 	NvOdmServicesPmuVddRailCapabilities vddrailcap;
@@ -533,7 +533,7 @@ static void star_accel_set_power_rail(NvU32 vdd_id, NvBool is_enable )
 	#endif
 	NvOdmServicesPmuClose(h_pmu);
 }
-// 20100702 taewan.kim@lge.com Power control bug fix [END]
+// 20100702  Power control bug fix [END]
 
 
 int lge_sensor_verify_kxtf9(void) 
@@ -1076,7 +1076,7 @@ static void star_accel_irq_handler(void *arg)
 {
 	
 	//printk("%s() -- start\n\n", __func__);
-	schedule_work(&g_accel->work); //magoo@lge.com
+	schedule_work(&g_accel->work); //
 
 }
 
@@ -1177,11 +1177,11 @@ static int __init star_accel_probe( struct platform_device *pdev )
 		goto failtomemorydev;
     }
 
-    // 20100702 taewan.kim@lge.com Power control bug fix [START]
+    // 20100702  Power control bug fix [START]
 	/*g_accel->h_accel_pmu = NvOdmServicesPmuOpen();
 	if( !g_accel->h_accel_pmu )
 	{err=-ENOSYS; goto failtomemorydev;}*/
-    // 20100702 taewan.kim@lge.com Power control bug fix [START]
+    // 20100702  Power control bug fix [START]
 
 	pcon = (NvOdmPeripheralConnectivity*)NvOdmPeripheralGetGuid(NV_ODM_GUID('a','c','c','e','l','e','r','o'));
 	//pcon = (NvOdmPeripheralConnectivity*)NvOdmPeripheralGetGuid(NV_ODM_GUID('p','r','o','x','i','m','i','t'));
@@ -1205,7 +1205,7 @@ static int __init star_accel_probe( struct platform_device *pdev )
 				#if STAR_ACCEL_DEBUG
 					printk("[skhwang] KXTF9 POWER %d\n", g_accel->vdd_id );
 				#endif
-                // 20100702 taewan.kim@lge.com Power control bug fix
+                // 20100702  Power control bug fix
 				star_accel_set_power_rail(g_accel->vdd_id, NV_TRUE);
 				NvOdmOsWaitUS(30);
 				break;
@@ -1322,16 +1322,20 @@ static int star_accel_remove( struct platform_device *pdev )
 	return 0;
 }
 
+extern int star_proxi_get_status(void);
+
 int star_accel_suspend(struct platform_device *dev, pm_message_t state)
 {
-	//star_accel_set_power_rail(g_accel->vdd_id, NV_FALSE);
+    if (!star_proxi_get_status())
+        star_accel_disable_irq();
 
 	return 0;
 }
 
 int star_accel_resume(struct platform_device *dev)
 {
-	//star_accel_set_power_rail(g_accel->vdd_id, NV_TRUE);
+    if (!star_proxi_get_status())
+        star_accel_enable_irq();
 
 	return 0;
 }
@@ -1359,6 +1363,6 @@ static void __exit star_accel_exit(void)
 module_init(star_accel_init);
 module_exit(star_accel_exit);
 
-MODULE_AUTHOR("sk.hwang@lge.com");
+MODULE_AUTHOR("");
 MODULE_DESCRIPTION("driver of star accelerometer sensor");
 MODULE_LICENSE("GPL");

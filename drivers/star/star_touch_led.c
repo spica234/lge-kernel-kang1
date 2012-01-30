@@ -274,7 +274,6 @@ static ssize_t star_pulseint_store(struct device *dev,
 {
     NvU32 val = (NvU32)simple_strtoul(buf, NULL, 10);
     s_touchLED.pulse_interval = val;
-    return size;
 }
 
 static ssize_t star_pulseint_show(struct device *dev,

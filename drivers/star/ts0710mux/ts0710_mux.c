@@ -1066,12 +1066,6 @@ void ts0710_recv_data(ts0710_con * ts0710, char *data, int len)
 	short_pkt = (short_frame *) data;
 
 	dlci = short_pkt->h.addr.server_chn << 1 | short_pkt->h.addr.d;
-	if(dlci < 0 || dlci >= TS0710MAX_CHANNELS)
-	{//If dlci is out of max channels, wake_up_interruptible(&ts0710->dlci[dlci].open_wait) makes kernel page fault.
-		TS0710_PRINTK("%s : Invalid DLCI[%d]!! This rx data may be broken!", __FUNCTION__, dlci);
-		return;
-	}
-
 	if (!dlci)
 		return ts0710_recv_data_server(ts0710, short_pkt, len);
 
