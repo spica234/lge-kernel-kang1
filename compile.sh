@@ -59,10 +59,10 @@ sed -i "s/$cout/$cnew/g" $kh/.config
 export cver=`grep "^CONFIG_LOCALVERSION" $kh/.config`
 
 if [[ $2 = "shared" ]]; then
-	export nver=`echo 'CONFIG_LOCALVERSION="-LGHyBRiD'$(($rh))'S"'`
+	export nver=`echo 'CONFIG_LOCALVERSION="-ETaNa_'$(($rh))'S"'`
 	sed -i "s/$cver/$nver/g" $kh/.config
 else
-	export nver=`echo 'CONFIG_LOCALVERSION="-LGHyBRiD'$(($rh))'"'`
+	export nver=`echo 'CONFIG_LOCALVERSION="-ETaNa_'$(($rh))'"'`
 	sed -i "s/$cver/$nver/g" $kh/.config
 fi
 
