@@ -1,5 +1,3 @@
-
-
 /*
  * drivers/star/star_bl.c
  *
@@ -263,29 +261,9 @@ static struct aat2870_ctl_tbl_t aat2870bl_normal_tbl[] = {
 #endif
 };
 
-//#define ORIGINAL_ALC_VALUES
-
 /* Set to ALC mode HW-high gain mode*/
 static struct aat2870_ctl_tbl_t aat2870bl_alc_tbl[] = {
-    /* ALC table 0~15 20101218 tunning ver. */
-#if ORIGINAL_ALC_VALUES
-    {0x12,0x19},  /* ALS current setting 5.6mA */
-    {0x13,0x20},  /* ALS current setting 7.2mA */
-    {0x14,0x21},  /* ALS current setting 7.4mA */
-    {0x15,0x23},  /* ALS current setting 7.9mA */
-    {0x16,0x24},  /* ALS current setting 8.1mA */
-    {0x17,0x25},  /* ALS current setting 8.3mA */
-    {0x18,0x27},  /* ALS current setting 9.0mA */
-    {0x19,0x28},  /* ALS current setting 9.5mA */
-    {0x1A,0x29},  /* ALS current setting 10.1mA */
-    {0x1B,0x2A},  /* ALS current setting 10.8mA */
-    {0x1C,0x2F},  /* ALS current setting 11.5mA */
-    {0x1D,0x30},  /* ALS current setting 12.2mA */
-    {0x1E,0x32},  /* ALS current setting 12.8mA */
-    {0x1F,0x35},  /* ALS current setting 13.5mA */
-    {0x20,0x36},  /* ALS current setting 14.2mA */
-    {0x21,0x37},  /* ALS current setting 14.6mA */
-#else
+/* ALC table 0~15 20101218 tunning ver. */
     {0x12,0x0C},  /* ALS current setting 2.64mA  - 0 lux */
     {0x13,0x0E},  /* ALS current setting 3.08mA  - 50 lux*/
     {0x14,0x0F},  /* ALS current setting 3.3mA   - 100 lux */
@@ -302,16 +280,12 @@ static struct aat2870_ctl_tbl_t aat2870bl_alc_tbl[] = {
     {0x1F,0x20},  /* ALS current setting 7.04mA  - 1400 lux */
     {0x20,0x25},  /* ALS current setting 8.14mA  - 2000 lux */
     {0x21,0x37},  /* ALS current setting 12.38mA - 3000 lux */
-#endif
-
-    { 0x0E, 0x73 },  /* SNSR_LIN_LOG=linear, ALSOUT_LIN_LOG=log, RSET=16k~64k,
-                                   * GAIN=low, GM=man gain, ALS_EN=on */
-    { 0x0F, 0x01 },  /* SBIAS=3.0V, SBIAS=on */
-    { 0x10, 0x90 },  /* pwm inactive, auto polling, 1sec, +0% */
-    { 0x00, 0xFF },  /* Channel Enable : ALL */
-    { 0xFF, 0xFE }   /* end or command */
+    {0x0E,0x73},  /* SNSR_LIN_LOG=linear, ALSOUT_LIN_LOG=log, RSET=16k~64k, GAIN=low, GM=man gain, ALS_EN=on */
+    {0x0F,0x01},  /* SBIAS=3.0V, SBIAS=on */
+    {0x10,0x90},  /* pwm inactive, auto polling, 1sec, +0% */
+    {0x00,0xFF},  /* Channel Enable : ALL */
+    {0xFF,0xFE}   /* end or command */
 };
-
 
 static struct aat2870_lux_tbl_t  aat2870_lux_tbl[] = {
 
@@ -1022,11 +996,11 @@ else if( onoff == 0 ){
 //20110202, , force off [START]
 static void star_aat2870_reset(void);
 
-static ssize_t
-star_bl_show_foff(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return 0;
-}
+//static ssize_t
+//star_bl_show_foff(struct device *dev, struct device_attribute *attr, char *buf)
+//{
+//	return 0;
+//}
 
 static ssize_t
 star_bl_store_foff(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
