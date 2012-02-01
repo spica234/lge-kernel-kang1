@@ -222,7 +222,7 @@ static void print_active_locks(int type)
 				pr_info("wake lock %s, expired\n", lock->name);
 		} else {
 			pr_info("active wake lock %s\n", lock->name);
-			if (!debug_mask & DEBUG_EXPIRE)
+			if (!debug_mask && DEBUG_EXPIRE)
 				print_expired = false;
 		}
 	}
@@ -543,7 +543,7 @@ static int active_wakelock_stats_show(struct seq_file *m, void *unused)
 	unsigned long irqflags;
 	struct wake_lock *lock;
 	bool print_expired = true;
-	int ret;
+	//int ret;
 	int type = WAKE_LOCK_SUSPEND;
 	
 	spin_lock_irqsave(&list_lock, irqflags);
@@ -558,7 +558,7 @@ static int active_wakelock_stats_show(struct seq_file *m, void *unused)
 				seq_printf(m, "wake lock %s, expired\n", lock->name);
 		} else {
 			seq_printf(m, "active wake lock %s\n", lock->name);
-			if (!debug_mask & DEBUG_EXPIRE)
+			if (!debug_mask && DEBUG_EXPIRE)
 				print_expired = false;
 		}
 	}
