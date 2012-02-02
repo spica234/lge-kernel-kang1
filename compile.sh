@@ -1,6 +1,6 @@
 #!/bin/bash
-# ANYKERNEL compiler script by vadonka v1.1.1
-# Date: 2012.01.29
+# ANYKERNEL compiler script by vadonka v1.1.2
+# Date: 2012.02.02
 #
 # You need to define this below:
 ######################################################
@@ -10,6 +10,8 @@ export kh=`pwd`
 export ch=/home/android/android/compiled
 # CM7 original lge kernel boot.img location
 export cm7b=/home/android/android/cm7orig_kernel
+# LOG file location
+export WARNLOG=`pwd`/warn.log
 ######################################################
 
 # Check executables
@@ -71,7 +73,7 @@ export USE_CCACHE=1
 export CCACHE_DIR=~/android/ccache
 make clean
 make ARCH=arm CROSS_COMPILE=$cc clean
-make ARCH=arm CROSS_COMPILE=$cc
+make ARCH=arm CROSS_COMPILE=$cc 2> $WARNLOG
 
 if [ -e $kh/arch/arm/boot/zImage ]; then
 export kver=`echo $nver | awk 'BEGIN { FS = "=" } ; { print $2 }' | sed 's/"//g'`
