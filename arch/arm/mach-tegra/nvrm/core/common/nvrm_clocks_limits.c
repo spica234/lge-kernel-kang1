@@ -87,7 +87,7 @@ NvU32 FakeShmooVmaxIndex = NVRM_VOLTAGE_STEPS - 1;
 NvU32 FakeShmooVoltages[] = {
     780,
     825,
-    875,
+    850,
     900,
     1000,
     1050,
