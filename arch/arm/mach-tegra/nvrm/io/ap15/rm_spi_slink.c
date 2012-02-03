@@ -830,18 +830,7 @@ WaitForTransferCompletion(
 // LGE_UPDATE_S  0707
 
 	pr_err("Spi%d: %dms Timeout Error\n", hRmSpiSlink->InstanceId, WaitTimeOutMS);
-//20101221-1, , Workaround code to recover repeated spi transaction timeout error [START]
-/**
-<Only for AP20(NVIDIA BSP)>
-5. Restart rm_spi handle if rm_spi error happens
-       - android/kernel/arch/arm/mach-tegra/include/rm_spi.h
-       - android/kernel/arch/arm/mach-tegra/nvrm/io/ap15/rm_spi_slink.c
-       - android/kernel/drivers/spi/tegra_spi.c
-               : Modify rm_spi API function to return error of Master SPI transaction
-               : This recovers repeated spi timeout error
-**/
                //hRmSpiSlink->IsIntDoneDue = NV_TRUE;
-//20101221-1, , Workaround code to recover repeated spi transaction timeout error [END]
         // Disable the data flow first.
         hHwInt->HwSetDataFlowFxn(&hRmSpiSlink->HwRegs,
                                     hRmSpiSlink->CurrentDirection, NV_FALSE);
@@ -2211,6 +2200,9 @@ static NvError MasterModeReadWriteDma(
     NvU32 PacketBitLength)
 {
     NvError Error = NvSuccess;
+#if defined (CONFIG_MACH_STAR_REV_F)
+    NvError nvError = NvSuccess;
+#endif
     NvU32 CurrentTransWord;
     NvU32 BufferOffset = 0;
     NvU32 BytesPerPacket = (PacketBitLength +7)/8;
@@ -2373,7 +2365,12 @@ static NvError MasterModeReadWriteDma(
             hRmSpiSlink->hHwInterface->HwStartTransferFxn(&hRmSpiSlink->HwRegs, NV_TRUE);
 
         if (!Error)
+
+#ifdef CONFIG_MACH_STAR_REV_F
             WaitForTransferCompletion(hRmSpiSlink, 1000, NV_FALSE);	////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
+#else
+            nvError = WaitForTransferCompletion(hRmSpiSlink, 500, NV_FALSE);        ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);	
+#endif
 
         Error = (hRmSpiSlink->RxTransferStatus)? hRmSpiSlink->RxTransferStatus:
                                     hRmSpiSlink->TxTransferStatus;
@@ -2400,6 +2397,11 @@ static NvError MasterModeReadWriteDma(
                                     hRmSpiSlink->CurrentDirection, NV_FALSE);
 
     *pPacketsTransferred = PacketsRequested - PacketsRemaining;
+#if defined (CONFIG_MACH_STAR_REV_F)
+       if(nvError!=NvSuccess)
+               Error = nvError;
+#endif
+
     return Error;
 }
 static NvError SlaveModeSpiStartReadWriteCpu(

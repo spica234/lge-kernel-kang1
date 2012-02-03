@@ -97,11 +97,6 @@ static int key_wakeup_ISR = 0;
 static void __iomem *pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
 #endif
 
-//20110324, , LP1 powerkey skip issue [START]
-extern bool core_lock_on;
-static int LP1_key_wake = 0;
-//20110324, , LP1 powerkey skip issue [END]
-
 //20101129, , idle current issue [START]
 typedef struct TouchMakerRec
 {
@@ -152,7 +147,7 @@ static void powerkey_handle(struct work_struct *wq)
     // Clear power key wakeup pad bit.
     // Because powerkey interrupt might be called before powerkey_resume() is called.
     // In this case, clear bit not to call power key press at powerkey_resume() function.
-    if (key_wakeup_ISR == 0 || LP1_key_wake == 1)
+    if (key_wakeup_ISR == 0 )
     {
         if( reg & WAKEUP_POWERKEY_MASK){
             printk("[PWR_KEY] wakeup pad clear\n");
@@ -170,9 +165,6 @@ static void powerkey_handle(struct work_struct *wq)
             input_sync(s_powerkey.inputDev);
         }
         key_wakeup_ISR = 1;
-//20110324, , LP1 powerkey skip issue [START]
-        LP1_key_wake = 0;
-//20110324, , LP1 powerkey skip issue [END]
         return;
     }
 #endif
@@ -202,11 +194,6 @@ static void powerkey_interrupt_handler(void* arg)
         return;
     }
     printk("powerkey_interrupt_handler\n");
-//20110324, , LP1 powerkey skip issue [START]
-    if(core_lock_on && key_wakeup_ISR==0){
-        LP1_key_wake = 1;
-    }
-//20110324, , LP1 powerkey skip issue [END]
 #ifdef POWERKEY_DELAYED_WORKQUEUE
     schedule_delayed_work(&powerKeyDevice->work, msecs_to_jiffies(20));
     wake_lock_timeout(&s_powerkey.wlock, msecs_to_jiffies(50));
@@ -302,7 +289,7 @@ static const struct attribute_group star_pmic_group = {
     .attrs = star_pmic_attributes,
 };
 
-//20101110, jh.ahn@lge.com, Function for Warm-boot [START]
+//20101110, , Function for Warm-boot [START]
 static ssize_t star_reset_show(struct device *dev, 
             struct device_attribute *attr, char *buf)
 {
@@ -385,7 +372,7 @@ static struct attribute *star_reset_attributes[] = {
 static const struct attribute_group star_reset_group = {
     .attrs = star_reset_attributes,
 };
-//20101110, jh.ahn@lge.com, Function for Warm-boot [END]
+//20101110, , Function for Warm-boot [END]
 
 // 20110209  disable gpio interrupt during power-off  [START] 
 //extern void muic_gpio_interrupt_mask();

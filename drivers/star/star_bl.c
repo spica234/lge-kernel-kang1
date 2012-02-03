@@ -54,7 +54,7 @@
 #include "aat2870.h"
 #include "star_bl.h"
 #include "star_gpioi2c.h"
-// 20110808 srinivas.mittapalli@lge.com GPIO Sleep status GPIO patch from P999
+// 20110808  GPIO Sleep status GPIO patch from P999
 #define AP_SUSPEND_STATUS
 
 #ifdef AP_SUSPEND_STATUS
@@ -261,9 +261,29 @@ static struct aat2870_ctl_tbl_t aat2870bl_normal_tbl[] = {
 #endif
 };
 
+//#define ORIGINAL_ALC_VALUES
+
 /* Set to ALC mode HW-high gain mode*/
 static struct aat2870_ctl_tbl_t aat2870bl_alc_tbl[] = {
 /* ALC table 0~15 20101218 tunning ver. */
+#if ORIGINAL_ALC_VALUES
+    {0x12,0x19},  /* ALS current setting 5.6mA */
+    {0x13,0x20},  /* ALS current setting 7.2mA */
+    {0x14,0x21},  /* ALS current setting 7.4mA */
+    {0x15,0x23},  /* ALS current setting 7.9mA */
+    {0x16,0x24},  /* ALS current setting 8.1mA */
+    {0x17,0x25},  /* ALS current setting 8.3mA */
+    {0x18,0x27},  /* ALS current setting 9.0mA */
+    {0x19,0x28},  /* ALS current setting 9.5mA */
+    {0x1A,0x29},  /* ALS current setting 10.1mA */
+    {0x1B,0x2A},  /* ALS current setting 10.8mA */
+    {0x1C,0x2F},  /* ALS current setting 11.5mA */
+    {0x1D,0x30},  /* ALS current setting 12.2mA */
+    {0x1E,0x32},  /* ALS current setting 12.8mA */
+    {0x1F,0x35},  /* ALS current setting 13.5mA */
+    {0x20,0x36},  /* ALS current setting 14.2mA */
+    {0x21,0x37},  /* ALS current setting 14.6mA */
+#else
     {0x12,0x0C},  /* ALS current setting 2.64mA  - 0 lux */
     {0x13,0x0E},  /* ALS current setting 3.08mA  - 50 lux*/
     {0x14,0x0F},  /* ALS current setting 3.3mA   - 100 lux */
@@ -280,7 +300,10 @@ static struct aat2870_ctl_tbl_t aat2870bl_alc_tbl[] = {
     {0x1F,0x20},  /* ALS current setting 7.04mA  - 1400 lux */
     {0x20,0x25},  /* ALS current setting 8.14mA  - 2000 lux */
     {0x21,0x37},  /* ALS current setting 12.38mA - 3000 lux */
-    {0x0E,0x73},  /* SNSR_LIN_LOG=linear, ALSOUT_LIN_LOG=log, RSET=16k~64k, GAIN=low, GM=man gain, ALS_EN=on */
+#endif
+
+    { 0x0E, 0x73 },  /* SNSR_LIN_LOG=linear, ALSOUT_LIN_LOG=log, RSET=16k~64k,
+                                   * GAIN=low, GM=man gain, ALS_EN=on */
     {0x0F,0x01},  /* SBIAS=3.0V, SBIAS=on */
     {0x10,0x90},  /* pwm inactive, auto polling, 1sec, +0% */
     {0x00,0xFF},  /* Channel Enable : ALL */
@@ -886,53 +909,7 @@ star_bl_show_onoff(struct device *dev, struct device_attribute *attr, char *buf)
 	return r;
 }
 
-	//0418 delayed work km.lee
-	#if 0
-static struct delayed_work delayed_work_bl_on;
 
-static void star_bl_delay_work_on( struct work_struct* work )
-{
-	
-	static struct aat2870_drvdata_t *drv;
-	int onoff = 1;
-	
-	drv = drvdata;
-	if (onoff && drv->status == BL_POWER_STATE_OFF) {
-
-		if(drv->dim_status != DIMMING_NONE)	{
-
-			star_bl_send_cmd(drv, aat2870bl_stop_fade_tbl);
-			drv->dim_status = DIMMING_NONE;
-			DBG("[BL] DIMMING_OFF \n");
-		}
-
-		if (drv->op_mode == AAT2870_OP_MODE_NORMAL) {
-
-			star_bl_send_cmd(drv, drv->cmds.normal);
-		} else if (drv->op_mode == AAT2870_OP_MODE_ALC) {
-
-			star_bl_send_cmd(drv, drv->cmds.alc);
-		} else {
-		}
-		drv->status = BL_POWER_STATE_ON;
-		drv->power_onoff_ref = TRUE;
-		printk("[BL] Power On\n");
-	} else if (!onoff && drv->status == BL_POWER_STATE_ON) {
-
-		if(drv->dim_status != DIMMING_NONE)	{
-
-			star_bl_send_cmd(drv, aat2870bl_stop_fade_tbl);
-			drv->dim_status = DIMMING_NONE;
-			DBG("[BL] DIMMING_OFF \n");
-		}
-		star_bl_send_cmd(drv, drv->cmds.sleep);
-		drv->status = BL_POWER_STATE_OFF;
-		drv->power_onoff_ref = FALSE;
-		printk("[BL] Power Off\n");
-	} else {
-	}
-}
-#endif
 static ssize_t
 star_bl_store_onoff(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -946,17 +923,8 @@ star_bl_store_onoff(struct device *dev, struct device_attribute *attr, const cha
 
 	sscanf(buf, "%d", &onoff);
 
-	//0418 delayed work km.lee
-	#if 0
-if( onoff == 1 ){
-	printk("ON......\n");
-	schedule_delayed_work( &delayed_work_bl_on, 2000 );
-}
-else if( onoff == 0 ){
-	printk("OFF......\n");
-#endif
 	if (onoff && drv->status == BL_POWER_STATE_OFF) {
-        //msleep(500);
+
 		if(drv->dim_status != DIMMING_NONE)	{
 
 			star_bl_send_cmd(drv, aat2870bl_stop_fade_tbl);
@@ -996,11 +964,11 @@ else if( onoff == 0 ){
 //20110202, , force off [START]
 static void star_aat2870_reset(void);
 
-//static ssize_t
-//star_bl_show_foff(struct device *dev, struct device_attribute *attr, char *buf)
-//{
-//	return 0;
-//}
+static ssize_t
+star_bl_show_foff(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	return 0;
+}
 
 static ssize_t
 star_bl_store_foff(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
@@ -1025,7 +993,7 @@ star_bl_store_foff(struct device *dev, struct device_attribute *attr, const char
 	return count;
 }
 
-//20110419 km.lee@lge.com LGD panel ver. info [START]
+//20110419  LGD panel ver. info [START]
 static ssize_t
 star_show_panel_info(struct device *dev, struct device_attribute *attr, char *buf )
 {
@@ -1067,8 +1035,8 @@ star_store_panel_info(struct device *dev, struct device_attribute *attr, char *b
 {
 	return 0;
 }
-//20110419 km.lee@lge.com LGD panel ver. info [END]
-//20110202, cs77.ha@lge.com, force off [END]
+//20110419  LGD panel ver. info [END]
+//20110202, , force off [END]
 
 static DEVICE_ATTR(intensity, 0666, star_bl_show_intensity, star_bl_store_intensity);
 static DEVICE_ATTR(alc_level, 0444, star_bl_show_alc_level, NULL);
@@ -1076,7 +1044,7 @@ static DEVICE_ATTR(alc, 0664, star_bl_show_alc, star_bl_store_alc);
 static DEVICE_ATTR(onoff, 0666, star_bl_show_onoff, star_bl_store_onoff);
 static DEVICE_ATTR(hwdim, 0666, star_bl_show_hwdim, star_bl_store_hwdim);
 static DEVICE_ATTR(lsensor_onoff, 0666, star_bl_show_lsensor_onoff, star_bl_store_lsensor_onoff);
-//20110419 km.lee@lge.com LGD panel ver. info
+//20110419  LGD panel ver. info
 static DEVICE_ATTR(panel_info, 0666, star_show_panel_info, star_store_panel_info);
 //static DEVICE_ATTR(alc_reg, 0666, alc_reg_show, alc_reg_store);
 //20110202, , force off [START]
@@ -1091,7 +1059,7 @@ static struct attribute *star_bl_attributes[] = {
 	&dev_attr_onoff.attr,
 	&dev_attr_hwdim.attr,
 	&dev_attr_lsensor_onoff.attr,
-//20110419 km.lee@lge.com LGD panel ver. info
+//20110419  LGD panel ver. info
 	&dev_attr_panel_info,
     //20110202, , force off [START]
 	&dev_attr_foff.attr,
@@ -1294,18 +1262,13 @@ static int star_aat2870_probe(struct platform_device *pdev)
         printk(KERN_ERR "[star modem_chk] NvOdmGpioOpen Error \n");
         goto err_open_modem_chk_gpio_fail;
     }
-#if defined(CONFIG_MODEM_IFX)
+#if defined(CONFIG_MACH_STAR_REV_F)
     port = 'r'-'a';
     pin = 0;
-#elif defined(CONFIG_MODEM_MDM)
-#if defined(CONFIG_MACH_STAR_SKT_REV_E) 
-    port = 'r'-'a';
-    pin = 0;
-#else
+#elif defined(CONFIG_MACH_STAR_TMUS)
     port = 'h'-'a';
     pin = 2;
 #endif
-#endif 
     s_modemCheck.pinHandle = NvOdmGpioAcquirePinHandle(s_modemCheck.gpioHandle, 
                                                     port, pin);
     if (!s_modemCheck.pinHandle)
