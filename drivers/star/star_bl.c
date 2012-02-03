@@ -652,6 +652,9 @@ star_bl_store_intensity(struct device *dev, struct device_attribute *attr, const
 	if (!count)
 		return -EINVAL;
 
+	if (strnlen(current->comm,11) == 11 && !strncmp(current->comm,"nvrm_daemon",11))
+		return count;
+
 	sscanf(buf, "%d", &intensity);//level range: 0 to 22 from aat2870 ds
 
 	//101103, , Replaced with function.
