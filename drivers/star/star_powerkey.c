@@ -31,7 +31,7 @@
 */
 
 //20100610, , sleep status gpio for modem [START]
-#define AP_SUSPEND_STATUS
+//#define AP_SUSPEND_STATUS
 //20100610, , sleep status gpio for modem [START]
 
 #define AP20_A03_POWERKEY_WAR
@@ -65,12 +65,11 @@
 
 extern void tegra_gpio_disable_all_irq(void);
 // 20110209  disable gpio interrupt during power-off  [END] 
-
-//20101110, , Function for Warm-boot [START]
+#if 1
 extern void write_cmd_reserved_buffer(unsigned char *buf, size_t len);
 extern void read_cmd_reserved_buffer(unsigned char *buf, size_t len);
 extern void emergency_restart(void); 
-//20101110, , Function for Warm-boot [END]
+#endif
 
 int  pwky_shutdown = 0;
 typedef struct PowerKeyDeviceRec
