@@ -1,6 +1,6 @@
 #!/bin/bash
-# ANYKERNEL compiler script by vadonka v1.1.2
-# Date: 2012.02.02
+# ANYKERNEL compiler script by vadonka v1.1.3
+# Date: 2012.02.04
 #
 # You need to define this below:
 ######################################################
@@ -82,7 +82,7 @@ export cdir=`date +%y%m%d%H%M`$kver
 mkdir -p $ch/$cdir
 unzip -qq empty.zip -d $ch/$cdir
 
-for m in `find $kh -name '*.ko'`; do
+for m in `find $kh -name '*.ko' ! -name '*old.ko'`; do
     cp $m $ch/$cdir/system/lib/modules
 done
 
@@ -96,5 +96,6 @@ userdata:38700:c0000:800 androidboot.hardware=p990"
 abootimg -i $ch/$cdir/tmp/boot.img > $ch/$cdir/tmp/bootimg.info
 cd $ch/$cdir && zip -rq9 $ch/$cdir.zip .
 cp $kh/arch/arm/boot/zImage $ch/$cdir/tmp
+cp `find $kh -name '*old.ko'` $ch/$cdir/system/lib/modules
 
 fi
