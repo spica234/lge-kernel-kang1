@@ -304,11 +304,6 @@ static int tegra_cpufreq_driver_init(struct cpufreq_policy *pol)
 	return 0;
 }
 
-static struct freq_attr *tegra_cpufreq_attr[] = {
-	&cpufreq_freq_attr_scaling_available_freqs,
-	NULL,
-};
-
 static struct cpufreq_driver s_tegra_cpufreq_driver = {
 	.flags		= CPUFREQ_CONST_LOOPS,
 	.verify		= tegra_verify_speed,
@@ -317,7 +312,6 @@ static struct cpufreq_driver s_tegra_cpufreq_driver = {
 	.init		= tegra_cpufreq_driver_init,
 	.name		= "tegra_cpufreq",
 	.owner		= THIS_MODULE,
-	.attr		= tegra_cpufreq_attr,
 
 };
 
