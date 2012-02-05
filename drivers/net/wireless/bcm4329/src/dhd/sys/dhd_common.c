@@ -1717,7 +1717,7 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 			sizeof(wl_country_t), iovbuf, sizeof(iovbuf));
 		if ((ret = dhdcdc_set_ioctl(dhd, 0, WLC_SET_VAR, iovbuf, sizeof(iovbuf))) < 0)
 			DHD_ERROR(("%s: country code setting failed\n", __FUNCTION__));
-	}
+		}
 
 #if !defined(CONFIG_LGE_BCM432X_PATCH)
 	/* Set Listen Interval */
@@ -1917,7 +1917,7 @@ dhd_iscan_free_buf(void *dhdp, iscan_buf_t *iscan_delete)
 	dhd_pub_t *dhd = dhd_bus_pub(dhdp);
 
 	dhd_iscan_lock();
-	/* If iscan_delete is null then delete the entire
+	/* If iscan_delete is null then delete the entire 
 	 * chain or else delete specific one provided
 	 */
 	if (!iscan_delete) {
