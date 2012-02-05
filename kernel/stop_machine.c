@@ -401,17 +401,17 @@ struct stop_machine_data {
 };
 
 /* Like num_online_cpus(), but hotplug cpu uses us, so we need this. */
-//static unsigned int num_threads;
-//static atomic_t thread_ack;
+static unsigned int num_threads;
+static atomic_t thread_ack;
 static DEFINE_MUTEX(lock);
 /* setup_lock protects refcount, stop_machine_wq and stop_machine_work. */
 static DEFINE_MUTEX(setup_lock);
 /* Users of stop_machine. */
-//static int refcount;
-//static struct workqueue_struct *stop_machine_wq;
-//static struct stop_machine_data active, idle;
-//static const struct cpumask *active_cpus;
-//static void *stop_machine_work;
+static int refcount;
+static struct workqueue_struct *stop_machine_wq;
+static struct stop_machine_data active, idle;
+static const struct cpumask *active_cpus;
+static void *stop_machine_work;
 
 static void set_state(struct stop_machine_data *smdata,
 		      enum stopmachine_state newstate)

@@ -543,7 +543,7 @@ static int active_wakelock_stats_show(struct seq_file *m, void *unused)
 	unsigned long irqflags;
 	struct wake_lock *lock;
 	bool print_expired = true;
-	//int ret;
+	int ret;
 	int type = WAKE_LOCK_SUSPEND;
 	
 	spin_lock_irqsave(&list_lock, irqflags);
