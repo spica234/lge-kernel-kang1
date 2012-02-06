@@ -12,11 +12,11 @@
 #
 # $Id: makefile.26,v 1.1.144.1 2008/05/07 22:53:44 Exp $
 
-obj-$(CONFIG_BCM4329) += wireless_old.o
+obj-$(CONFIG_BCM4329_OLD) += wireless.o
 
 obj-$(CONFIG_BRCM_USE_STATIC_BUF) += brcm_static_buf.o
 
-wireless_old-objs = \
+wireless-objs = \
 	src/dhd/sys/dhd_linux.o \
 	src/shared/linux_osl.o \
 	src/shared/bcmutils.o \
