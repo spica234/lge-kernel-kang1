@@ -347,7 +347,7 @@ static const NvOdmSdramControllerConfigAdv s_NvOdmStarSmartphoneHynixEmcConfigTa
     },
     {
                   0x20,   /* Rev 2.0 */
-                300000,   /* SDRAM frquency */
+CONFIG_DDR2_SDRAM_FREQ,   /* SDRAM frquency */
                   1200,   /* EMC core voltage */
                     46,   /* Number of EMC parameters below */
         {
