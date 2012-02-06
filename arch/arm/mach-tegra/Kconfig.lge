@@ -20,17 +20,17 @@ config BOOST_PERIPHERALS
 
 config MAX_AVP_OC_FREQ
 	int "AVP Overclock Frequency"
-	default 280000
+	default 240000
         depends on FAKE_SHMOO && BOOST_PERIPHERALS
 
 config MAX_3D_OC_FREQ
 	int "3D Overclock Frequency"
-	default 350000
+	default 345000
         depends on FAKE_SHMOO && BOOST_PERIPHERALS
 
 config DDR2_SDRAM_FREQ
 	int "DDR2 SDRAM Frequency"
-	default 300000
+	default 325000
 
 config GPU_MEM_CARVEOUT_SZ
 	int "GPU Memory Carveout Size"
