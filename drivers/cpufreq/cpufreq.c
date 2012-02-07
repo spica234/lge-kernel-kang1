@@ -852,6 +852,23 @@ static struct kobj_type ktype_cpufreq = {
 	.release	= cpufreq_sysfs_release,
 };
 
+#ifdef CONFIG_SMP
+/*
+ * Checks to see if a cpu is managed by another cpu.
+ *
+ * @cpu: id of the cpu to check
+ * @pol: policy associated with the cpu
+ *
+ * Returns the id of the managing cpu or -1 if not managed.
+ */
+static int cpufreq_check_managed(int cpu, struct cpufreq_policy *pol)
+{
+	int pcpu = per_cpu(policy_cpu, cpu);
+	return (cpumask_weight(pol->cpus) > 1 &&
+		cpumask_test_cpu(cpu, pol->cpus) && cpu != pcpu) ? pcpu : -1;
+}
+#endif // CONFIG_SMP
+
 /*
  * Returns:
  *   Negative: Failure
@@ -1048,7 +1065,6 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 	unsigned int j;
 #ifdef CONFIG_HOTPLUG_CPU
 	int sibling;
-	struct cpufreq_policy *cp=NULL;
 #endif
 
 	if (cpu_is_offline(cpu))
@@ -1062,7 +1078,15 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 	 * CPU because it is in the same boat. */
 	policy = cpufreq_cpu_get(cpu);
 	if (unlikely(policy)) {
+		ret = sysfs_create_link_nowarn(&sys_dev->kobj,
+						&policy->kobj, "cpufreq");
+		if (ret) {
 			cpufreq_cpu_put(policy);
+		} else {
+			spin_lock_irqsave(&cpufreq_driver_lock, flags);
+			cpumask_set_cpu(cpu, policy->cpus);
+			spin_unlock_irqrestore(&cpufreq_driver_lock, flags);
+		}
 		cpufreq_debug_enable_ratelimit();
 		return 0;
 	}
@@ -1097,11 +1121,12 @@ static int cpufreq_add_dev(struct sys_device *sys_dev)
 
 	/* Set governor before ->init, so that driver could check it */
 #ifdef CONFIG_HOTPLUG_CPU
+struct cpufreq_policy *cp;
 	for_each_online_cpu(sibling) {
 		cp = per_cpu(cpufreq_cpu_data, sibling);
 		dprintk("found sibling %d\n", sibling);
-		if (cp != NULL) {
-			dprintk("found sibling CPU, copying policy\n");
+		if (cp && cp->governor &&
+		    (cpumask_test_cpu(cpu, cp->related_cpus))) {
 			policy->governor = cp->governor;
 				policy->min = cp->min;
 				policy->max = cp->max;
@@ -1931,6 +1956,14 @@ int cpufreq_update_policy(unsigned int cpu)
 		ret = -EINVAL;
 		goto fail;
 	}
+
+#ifdef CONFIG_SMP
+	if (cpufreq_check_managed(cpu, data) >= 0) {
+		unlock_policy_rwsem_write(cpu);
+		ret = 0;
+		goto fail;
+	}
+#endif
 
 	dprintk("updating policy for CPU %u\n", cpu);
 	memcpy(&policy, data, sizeof(struct cpufreq_policy));
