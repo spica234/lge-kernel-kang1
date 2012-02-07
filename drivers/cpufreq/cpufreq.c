@@ -2154,7 +2154,7 @@ static void powersave_early_suspend(struct early_suspend *handler)
 			goto out;
 		prev_max_freq = cpu_policy->max;
 		prev_min_freq = cpu_policy->min;
-		new_policy.max = cpu_policy->cpuinfo.min+125000;
+		new_policy.max = cpu_policy->cpuinfo.min_freq+125000;
 		new_policy.min = cpu_policy->cpuinfo.min_freq;
 		printk(KERN_INFO
 			"%s: set cpu%d freq in the %u-%u KHz range\n",
