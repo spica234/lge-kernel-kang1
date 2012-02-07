@@ -2137,6 +2137,8 @@ int cpufreq_unregister_driver(struct cpufreq_driver *driver)
 }
 EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
 
+#ifdef CONFIG_CPUFREQ_SCROFF_LIMIT
+
 unsigned int prev_max_freq;
 unsigned int prev_min_freq;
 
@@ -2154,7 +2156,7 @@ static void powersave_early_suspend(struct early_suspend *handler)
 			goto out;
 		prev_max_freq = cpu_policy->max;
 		prev_min_freq = cpu_policy->min;
-		new_policy.max = cpu_policy->cpuinfo.min_freq+125000;
+		new_policy.max = CONFIG_CPUFREQ_SCROFF_LIMIT_VALUE;
 		new_policy.min = cpu_policy->cpuinfo.min_freq;
 		printk(KERN_INFO
 			"%s: set cpu%d freq in the %u-%u KHz range\n",
@@ -2198,6 +2200,8 @@ static struct early_suspend _powersave_early_suspend = {
 	.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN,
 };
 
+#endif // CONFIG_CPUFREQ_SCROFF_LIMIT
+
 static int __init cpufreq_core_init(void)
 {
 	int cpu;
@@ -2216,7 +2220,11 @@ static int __init cpufreq_core_init(void)
 						&cpu_sysdev_class.kset.kobj);
 	BUG_ON(!cpufreq_global_kobject);
 
+#ifdef CONFIG_CPUFREQ_SCROFF_LIMIT
+
 	register_early_suspend(&_powersave_early_suspend);
+
+#endif // CONFIG_CPUFREQ_SCROFF_LIMIT
 
 	return 0;
 }

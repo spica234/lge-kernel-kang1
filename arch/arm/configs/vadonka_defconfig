@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.56
-# Tue Feb  7 11:14:28 2012
+# Tue Feb  7 12:39:36 2012
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -421,6 +421,7 @@ CONFIG_CMDLINE=""
 # CPU Power Management
 #
 CONFIG_CPU_FREQ=y
+# CONFIG_CPUFREQ_SCROFF_LIMIT is not set
 CONFIG_CPU_FREQ_TABLE=y
 # CONFIG_CPU_FREQ_DEBUG is not set
 CONFIG_CPU_FREQ_STAT=y
