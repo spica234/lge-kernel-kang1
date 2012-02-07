@@ -289,7 +289,7 @@ NvRmPrivClockLimitsInit(NvRmDeviceHandle hRmDevice)
         }
     }
 
-        s_ClockRangeLimits[2].MaxKHz = 280000;
+        s_ClockRangeLimits[2].MaxKHz = 240000;
         s_ClockRangeLimits[7].MaxKHz = 325000;
         s_ClockRangeLimits[8].MaxKHz = 345000;
         s_ClockRangeLimits[10].MaxKHz = 325000;
