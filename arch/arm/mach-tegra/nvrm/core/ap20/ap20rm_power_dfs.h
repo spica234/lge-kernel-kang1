@@ -242,8 +242,8 @@ extern "C"
  * If thresholds are set to 0, the values are derived at run time from the
  * characterization data
  */
-#define NVRM_CPU1_ON_MIN_KHZ (800000)
-#define NVRM_CPU1_OFF_MAX_KHZ (850000)
+#define NVRM_CPU1_ON_MIN_KHZ (1000000)
+#define NVRM_CPU1_OFF_MAX_KHZ (750000)
 
 #define NVRM_CPU1_ON_PENDING_MS (1500)
 #define NVRM_CPU1_OFF_PENDING_MS (1000)
@@ -280,7 +280,7 @@ extern "C"
 #define NVRM_DTT_POLL_MS_SLOW           (8000UL)
 
 /// Default low corners for core and dedicated CPU voltages
-#define NVRM_AP20_LOW_CORE_MV (750)
+#define NVRM_AP20_LOW_CORE_MV (775)
 #define NVRM_AP20_LOW_CPU_MV (750)
 /// Core voltage in suspend
 #define NVRM_AP20_SUSPEND_CORE_MV (850)
