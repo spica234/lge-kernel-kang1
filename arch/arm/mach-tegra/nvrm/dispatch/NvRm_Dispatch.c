@@ -260,9 +260,6 @@ NvError NvRm_Dispatch_Others( void *InBuffer, NvU32 InSize, void *OutBuffer, NvU
     return table_[packid_ - 1].DispFunc( funcid_, InBuffer, InSize,
         OutBuffer, OutSize, Ctx );
 fail:
-//    pr_debug("\n\n\n\n*****nvrm dispatch permission error,"
-//        "packid_=%d, funcid_=%d,uid=%d,gid=%d****\n\n\n\n",
-//        packid_, funcid_, (int)sys_getuid(), (int)sys_getgid());
     pr_debug("\n\n\n\n*****nvrm dispatch permission error,"
         "packid_=%d, funcid_=%d,uid=%d,gid=%d****\n\n\n\n",
         packid_, funcid_, (int)sys_getuid(), (int)sys_getgid());
