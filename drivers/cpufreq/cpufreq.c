@@ -2104,7 +2104,6 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
 }
 EXPORT_SYMBOL_GPL(cpufreq_register_driver);
 
-
 /**
  * cpufreq_unregister_driver - unregister the current CPUFreq driver
  *

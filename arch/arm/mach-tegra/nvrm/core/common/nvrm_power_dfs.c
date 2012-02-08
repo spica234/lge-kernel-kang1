@@ -1535,7 +1535,7 @@ static NvRmPmRequest DfsThread(NvRmDfs* pDfs)
             pDfs->ThermalThrottler.TcorePolicy.UpdateFlag)
         {
             NvRmPrivLockSharedPll();
-            if (!pDfs->VoltageScaler.StopFlag)
+                       if (!pDfs->VoltageScaler.StopFlag)
             {
                 // Check temperature and throttle DFS clocks if necessry. Make
                 // sure V/F scaling is running while throttling is in progress.

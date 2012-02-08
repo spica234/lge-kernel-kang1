@@ -387,11 +387,11 @@ static void tegra_spi_workerthread(struct work_struct *w)
 
     while (!list_empty(&spi->msg_queue)) {
 		struct spi_message *m;
-	    if (spi_shutdown )
-	    {
-     		printk("tegra_spi_workthread stopped\n");
-			return;
-	    }  
+	 if (spi_shutdown )
+	 {
+        printk("tegra_spi_workthread stopped\n");
+			   return;
+	 }
 		 
 		m = container_of(spi->msg_queue.next, struct spi_message, queue);
 		list_del_init(&m->queue);
@@ -619,7 +619,7 @@ static int tegra_spi_suspend(struct platform_device *pdev, pm_message_t msg)
 	pSpi = dev_get_drvdata(&pdev->dev);
 	pShimSpi = spi_master_get_devdata(pSpi);
 
-	printk( "tegra_spi_suspend\n");	//syblue.lee 100602 ; test
+	printk( "tegra_spi_suspend\n"); //syblue.lee 100602 ; test
 
 	return 0;
 }

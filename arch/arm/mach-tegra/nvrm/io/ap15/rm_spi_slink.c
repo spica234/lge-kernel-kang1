@@ -973,16 +973,16 @@ static void BoostFrequency(NvRmSpiHandle hRmSpiSlink, NvBool IsBoost, NvU32 Tran
             {
                 hRmSpiSlink->BusyHints[0].BoostKHz = 150000; // Emc
                 hRmSpiSlink->BusyHints[0].BoostDurationMs
-                    = 1000;	//20101218-1, , NVIDIA patch for RxTransfer error	: 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
+                    = 1000;    //20101218-1, , NVIDIA patch for RxTransfer error       : 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
                 hRmSpiSlink->BusyHints[1].BoostKHz = 150000; // Ahb
                 hRmSpiSlink->BusyHints[1].BoostDurationMs
-                    = 1000;	//20101218-1, , NVIDIA patch for RxTransfer error	: 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
+                    = 1000;    //20101218-1, , NVIDIA patch for RxTransfer error       : 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
                 hRmSpiSlink->BusyHints[2].BoostKHz = 150000; // Apb
                 hRmSpiSlink->BusyHints[2].BoostDurationMs
-                    = 1000;	//20101218-1, , NVIDIA patch for RxTransfer error	: 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
+                    = 1000;    //20101218-1, , NVIDIA patch for RxTransfer error       : 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
                 hRmSpiSlink->BusyHints[3].BoostKHz = 600000; // Cpu
                 hRmSpiSlink->BusyHints[3].BoostDurationMs
-                    = 1000;	//20101218-1, , NVIDIA patch for RxTransfer error	: 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
+                    = 1000;    //20101218-1, , NVIDIA patch for RxTransfer error       : 10 + ((4 * (TransactionSize * 8))) / ClockSpeedInKHz;
                 NvRmPowerBusyHintMulti(hRmSpiSlink->hDevice, hRmSpiSlink->RmPowerClientId,
                                        hRmSpiSlink->BusyHints, 4,
                                        NvRmDfsBusyHintSyncMode_Async);
@@ -2168,7 +2168,7 @@ static NvError MasterModeReadWriteDma(
 #ifdef CONFIG_MACH_STAR_TMUS
             nvError = WaitForTransferCompletion(hRmSpiSlink, 1000, NV_FALSE);  ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
 #else
-            nvError = WaitForTransferCompletion(hRmSpiSlink, 500, NV_FALSE);        ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);	
+            nvError = WaitForTransferCompletion(hRmSpiSlink, 500, NV_FALSE);   ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
 #endif
 
         Error = (hRmSpiSlink->RxTransferStatus)? hRmSpiSlink->RxTransferStatus:
@@ -2859,6 +2859,7 @@ NvError NvRmSpiTransaction(
     Error = SetPowerControl(hRmSpi, NV_TRUE);
     if (Error != NvSuccess)
         goto cleanup;
+
     BoostFrequency(hRmSpi, NV_TRUE, BytesRequested, ClockSpeedInKHz);
 
     hRmSpi->CurrTransInfo.PacketsPerWord = PacketsPerWord;
@@ -3052,6 +3053,7 @@ NvError NvRmSpiStartTransaction(
 
     // Enable Power/Clock.
     Error = SetPowerControl(hRmSpi, NV_TRUE);
+
     if (!Error)
         BoostFrequency(hRmSpi, NV_TRUE, BytesRequested, ClockSpeedInKHz);
 

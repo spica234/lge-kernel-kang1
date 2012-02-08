@@ -236,6 +236,7 @@ typedef struct
     /// The value is in terms of the clock tick where the clock freq is
     /// the interface frequency.
     NvU32 CsHoldTimeInClock;
+
 } NvOdmQuerySpiDeviceInfo;
 
 /**

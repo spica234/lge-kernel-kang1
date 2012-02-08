@@ -332,9 +332,9 @@ const NvU8 MIC2826_LDO_Votage_Table[] =
 #define MIN(a, b)   (a) <= (b) ? (a) : (b)
 #endif
 
-#define MAX8907_MIN_OUTPUT_VOLTAGE_SD_A_x10          6375  // 637.5 mV
+#define MAX8907_MIN_OUTPUT_VOLTAGE_SD_A_x10           6375  // 637.5 mV
 #define MAX8907_MIN_OUTPUT_VOLTAGE_SD_B_LDO_B         700   // 700 mV
-#define MAX8907_MIN_OUTPUT_VOLTAGE_LDO_A             650   // 650 mV
+#define MAX8907_MIN_OUTPUT_VOLTAGE_LDO_A              650   // 650 mV
 //20100413, , unused
 #ifndef CONFIG_MACH_STAR
 #define FAN5355_MIN_OUTPUT_VOLTAGE_x10                7000  // 700.0 mV
@@ -347,24 +347,24 @@ const NvU8 MIC2826_LDO_Votage_Table[] =
 #define MAX8907_OUTPUT_VOLTAGE_INCREMENT_LDO_A        25   // 25 mV
 //20100413, , unused
 #ifndef CONFIG_MACH_STAR
-#define FAN5355_OUTPUT_VOLTAGE_INCREMENT_x10           125  // 12.5 mV
+#define FAN5355_OUTPUT_VOLTAGE_INCREMENT_x10          125  // 12.5 mV
 #endif
-#define MAX8952_OUTPUT_VOLTAGE_INCREMENT_x10		100 // 10 mV
+#define MAX8952_OUTPUT_VOLTAGE_INCREMENT_x10          100 // 10 mV
 
 #define MAX8907_MAX_OUTPUT_VOLTAGE_SD_A_x10           14250  // 1,425.0 mV
 #define MAX8907_MAX_OUTPUT_VOLTAGE_SD_B_LDO_B         3800   // 3,800 mV
-#define MAX8907_MAX_OUTPUT_VOLTAGE_LDO_A            2225   // 2,225 mV
+#define MAX8907_MAX_OUTPUT_VOLTAGE_LDO_A              2225   // 2,225 mV
 //20100413, , unused
 #ifndef CONFIG_MACH_STAR
 #define FAN5355_MAX_OUTPUT_VOLTAGE_x10                13875  // 1,387.5 mV
 #endif
 #define MAX8952_MAX_OUTPUT_VOLTAGE_x10                13800  // 1,380.0 mV
 
-#define MAX8907_MIN_OUTPUT_VOLTAGE_RTC                 0   // 0 mV
-#define MAX8907_OUTPUT_VOLTAGE_INCREMENT_RTC           1   // Protected; use dummy, non-zero value
+#define MAX8907_MIN_OUTPUT_VOLTAGE_RTC                0   // 0 mV
+#define MAX8907_OUTPUT_VOLTAGE_INCREMENT_RTC          1   // Protected; use dummy, non-zero value
 //#define MAX8907_MAX_OUTPUT_VOLTAGE_RTC              3300   // 3,300 mV
 // WHISTLER/AP16 - Make this 1.2V for now, since ap15rm_power.c expects it that way.
-#define MAX8907_MAX_OUTPUT_VOLTAGE_RTC              1200
+#define MAX8907_MAX_OUTPUT_VOLTAGE_RTC                1200
 
 static NvU32 Max8907PmuVoltageSet_SD_A(const NvU32 OutMilliVolts)
 {
