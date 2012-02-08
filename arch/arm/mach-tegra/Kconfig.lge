@@ -30,7 +30,7 @@ config MAX_3D_OC_FREQ
 
 config DDR2_SDRAM_FREQ
 	int "DDR2 SDRAM Frequency"
-	default 325000
+	default 300000
 
 config GPU_MEM_CARVEOUT_SZ
 	int "GPU Memory Carveout Size"
