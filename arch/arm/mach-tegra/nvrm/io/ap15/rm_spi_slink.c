@@ -2165,8 +2165,8 @@ static NvError MasterModeReadWriteDma(
 
         if (!Error)
 
-#ifdef CONFIG_MACH_STAR_TMUS
-            nvError = WaitForTransferCompletion(hRmSpiSlink, 1000, NV_FALSE);  ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
+#ifndef CONFIG_MACH_STAR_REV_F
+            WaitForTransferCompletion(hRmSpiSlink, 1000, NV_FALSE);	////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
 #else
             nvError = WaitForTransferCompletion(hRmSpiSlink, 500, NV_FALSE);   ////20101218-3, , NVIDIA patch to protect infinite loop : WaitForTransferCompletion(hRmSpiSlink, NV_WAIT_INFINITE, NV_FALSE);
 #endif
@@ -2196,9 +2196,10 @@ static NvError MasterModeReadWriteDma(
                                     hRmSpiSlink->CurrentDirection, NV_FALSE);
 
     *pPacketsTransferred = PacketsRequested - PacketsRemaining;
-
+#if defined (CONFIG_MACH_STAR_REV_F)
        if(nvError!=NvSuccess)
                Error = nvError;
+#endif
 
     return Error;
 }
