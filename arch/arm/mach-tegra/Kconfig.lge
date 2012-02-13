@@ -25,7 +25,7 @@ config MAX_AVP_OC_FREQ
 
 config MAX_3D_OC_FREQ
 	int "3D Overclock Frequency"
-	default 345000
+	default 340000
         depends on FAKE_SHMOO && BOOST_PERIPHERALS
 
 config DDR2_SDRAM_FREQ
