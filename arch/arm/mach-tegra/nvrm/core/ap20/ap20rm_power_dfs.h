@@ -245,8 +245,8 @@ extern "C"
 #define NVRM_CPU1_ON_MIN_KHZ (810000)
 #define NVRM_CPU1_OFF_MAX_KHZ (850000)
 
-#define NVRM_CPU1_ON_PENDING_MS (1500)
-#define NVRM_CPU1_OFF_PENDING_MS (1000)
+#define NVRM_CPU1_ON_PENDING_MS (2500)
+#define NVRM_CPU1_OFF_PENDING_MS (600)
 
 /**
  * Defines AP20 Thermal policy parameters.
