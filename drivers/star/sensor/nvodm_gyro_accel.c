@@ -157,9 +157,7 @@ void NvGyroAccelSetPowerRail(NvOdmServicesPmuHandle hPMUDevice, NvU32 Id, NvBool
 		if (settletime)
 			NvOdmOsWaitUS(settletime);  // wait to settle power
 	}
-	NvOdmServicesPmuClose(hPMUDevice);
 }
-
 
 /*
  * Get interrupt type and source.
@@ -493,10 +491,8 @@ break;*/
 		printk("GyroAccel : NvGyroAccelI2COpen Error \n");
 		goto error;
 	};
-	printk(" ##1## GyroAccel : NvGyroAccelI2COpen check1 \n");
 	hGyro->RegsRead = NvGyroAccelI2CGetRegs;
 	hGyro->RegsWrite = NvGyroAccelI2CSetRegs;
-	printk(" ##2## GyroAccel : NvGyroAccelI2COpen check2 \n");
 	/*
 		if(NV_FALSE == NvGyroAccelConnectSemaphore(hGyro))
 		{

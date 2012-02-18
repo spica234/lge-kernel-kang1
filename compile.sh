@@ -1,6 +1,6 @@
 #!/bin/bash
-# ANYKERNEL compiler script by vadonka v1.1.3
-# Date: 2012.02.04
+# ANYKERNEL compiler script by vadonka v1.1.4
+# Date: 2012.02.16
 #
 # You need to define this below:
 ######################################################
@@ -14,6 +14,8 @@ export cm7b=/home/android/android/cm7orig_kernel
 export WARNLOG=`pwd`/warn.log
 # Kernel installer source
 export kinstsrc=/home/android/android/kernel-installer/source
+# Maximum thread number
+export mthd=`grep 'processor' /proc/cpuinfo | wc -l`
 ######################################################
 
 # Check executables
@@ -47,8 +49,13 @@ else
 fi
 
 if [ "$2" == "shared" ]; then
-	export csize="128"
-	echo "Using shared memory mode"
+    if [ -z $3 ]; then
+	export srh="0"
+    else
+	let srh=$3
+    fi
+	export csize=$((128-$rh+$srh))
+	echo "Using shared memory mode: $(($rh)) MB ramhack with $(($srh)) MB shared memory"
 else
 	let csize=$((128-$rh))
 	echo "Using traditional ramhack mode"
@@ -73,9 +80,9 @@ fi
 export cc=arm-linux-gnueabi-
 export USE_CCACHE=1
 export CCACHE_DIR=~/android/ccache
-make clean
-make ARCH=arm CROSS_COMPILE=$cc clean
-make ARCH=arm CROSS_COMPILE=$cc 2> $WARNLOG
+make clean -j $mthd
+make ARCH=arm CROSS_COMPILE=$cc clean -j $mthd
+make ARCH=arm CROSS_COMPILE=$cc -j $mthd 2> $WARNLOG
 
 if [ -e $kh/arch/arm/boot/zImage ]; then
 export kver=`echo $nver | awk 'BEGIN { FS = "=" } ; { print $2 }' | sed 's/"//g'`
