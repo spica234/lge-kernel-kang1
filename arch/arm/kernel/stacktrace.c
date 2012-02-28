@@ -1,4 +1,4 @@
-#include <linux/export.h>
+#include <linux/module.h>
 #include <linux/sched.h>
 #include <linux/stacktrace.h>
 
@@ -28,7 +28,7 @@ int notrace unwind_frame(struct stackframe *frame)
 
 	/* only go to a higher address on the stack */
 	low = frame->sp;
-	high = ALIGN(low, THREAD_SIZE);
+	high = ALIGN(low, THREAD_SIZE) + THREAD_SIZE;
 
 	/* check current frame pointer is within bounds */
 	if (fp < (low + 12) || fp + 4 >= high)
