@@ -70,9 +70,8 @@ s_NvOdmQueryProjectNameSetting[] = {'O','D','M',' ','K','i','t',0};
 static const NvOdmDownloadTransport
 s_NvOdmQueryDownloadTransportSetting = NvOdmDownloadTransport_None;
 
-
-
 #if defined(CONFIG_MACH_STAR)	//	Updated by nVidia, 2010.12.7
+
 static const NvOdmSdramControllerConfigAdv s_NvOdmStarSmartphoneHynixEmcConfigTable[] =
 {
     {
@@ -401,6 +400,7 @@ CONFIG_DDR2_SDRAM_FREQ,   /* SDRAM frquency */
     }
 };
 #else	// old version
+
 static const NvOdmSdramControllerConfigAdv s_NvOdmStarSmartphoneHynixEmcConfigTable[] =
 {
     {
